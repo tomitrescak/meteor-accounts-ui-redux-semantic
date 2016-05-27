@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "i18n-client": {
+      "version": "0.0.6",
+      "resolved": "https://registry.npmjs.org/i18n-client/-/i18n-client-0.0.6.tgz",
+      "from": "i18n-client@0.0.6"
+    }
+  }
+}
