@@ -1,15 +1,15 @@
-import { useDeps, composeWithTracker, composeAll } from "mantra-core";
 import Component from "../components/logged_user_view";
-export const composer = ({ context, showUserName }, onData) => {
-    const { Meteor, i18n } = context;
-    onData(null, {
-        userName: showUserName ? Meteor.user().profile.name : "",
-        context: context
-    });
-    return null;
-};
-export const depsMapper = (context, actions) => ({
-    signOut: actions.accounts.signOut,
+import { connect } from "react-redux";
+import context from "../configs/context";
+import actions from "../actions/accounts";
+const mapStateToProps = (state, origProps) => ({
+    userName: origProps.showUserName ? state.accounts.user.profile.name : null,
     context: context
 });
-export default composeAll(composeWithTracker(composer), useDeps(depsMapper))(Component);
+const mapDispatchToProps = (dispatch, ownProps) => {
+    context.dispatch = dispatch;
+    return {
+        signOut: () => dispatch(actions.signOut(context))
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Component);
