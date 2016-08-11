@@ -1,4 +1,7 @@
-import * as Actions from "../actions/accounts";
+import * as Actions from '../actions/accounts';
+import context from './context';
+
+const a = context.__;
 
 declare global {
   interface IGlobalState {
@@ -11,6 +14,8 @@ declare global {
     info?: string;
     token?: string;
     user?: any;
+    userId?: string;
+    loggingIn?: boolean;
   }
 
   interface IAction {
@@ -25,44 +30,49 @@ function showError(state: IState, error: string, info?: string) {
 }
 
 function clearUser(): any {
-  return { user: null, view: "signIn" };
+  return { user: null, userId: null, view: 'signIn' };
 }
 
 function assignUser(state: IState, user: any): any {
-  return Object.assign({}, state, { user: user, view: "loggedIn" });
+  return Object.assign({}, state, { user: user, userId: user._id, view: 'loggedIn' });
+}
+
+function changeLoggingIn(state: IState, loggingIn: boolean) {
+  return Object.assign({}, state, { loggingIn });
 }
 
 function showSignIn(state: IState)  {
-  return Object.assign({}, state, { view: "signIn", error: "", info: "" });
+  return Object.assign({}, state, { view: 'signIn', error: '', info: '' });
 }
 
 function showResendVerification(state: IState)  {
-  return Object.assign({}, state, { view: "resendVerification", error: "", info: "" });
+  return Object.assign({}, state, { view: 'resendVerification', error: '', info: '' });
 }
 
 function showRegister(state: IState) {
-  return Object.assign({}, state, { view: "register", error: "", info: "" });
+  return Object.assign({}, state, { view: 'register', error: '', info: '' });
 }
 
 function showForgotPassword(state: IState) {
-  return Object.assign({}, state, { view: "forgotPassword", error: "", info: "" });
+  return Object.assign({}, state, { view: 'forgotPassword', error: '', info: '' });
 }
 
 function showResetPassword(state: IState, token: string) {
-  return Object.assign({}, state, { view: "resetPassword", error: "", info: "", token: token });
+  return Object.assign({}, state, { view: 'resetPassword', error: '', info: '', token: token });
 }
 
 function clearErrors(state: IState) {
-  return Object.assign({}, state, { error: "", info: "" });
+  return Object.assign({}, state, { error: '', info: '' });
 }
 
 function setToken(state: IState, token: string) {
   return Object.assign({}, state, { token });
 }
 
-export default function(state: IState = { view: "signIn", error: "" }, action: any) {
-
+export default function(state: IState = { view: 'signIn', error: '', loggingIn: false }, action: any) {
   switch (action.type) {
+    case Actions.CHANGE_LOGGING_IN:
+      return changeLoggingIn(state, action.loggingIn);
     case Actions.CLEAR_MESSAGES:
       return clearErrors(state);
     case Actions.SHOW_ERROR:

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 interface IComponentProps {
-  context: IContext;
+  context: IAccountsUiContext;
 }
 
 interface IComponentActions {
@@ -14,7 +14,7 @@ interface IComponentActions {
 interface IComponent extends IComponentProps, IComponentActions { }
 
 export default class ResetPassword extends Component<IComponent, {}> {
-  context: IContext;
+  context: IAccountsUiContext;
 
   resetPassword() {
     if ($("#resetPassword").hasClass("loading")) {

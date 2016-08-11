@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 
 export interface IComponentProps {
-  context: IContext;
+  context: IAccountsUiContext;
 }
 
 export interface IComponentActions {
   signOut: () => void;
-  context: IContext;
+  context: IAccountsUiContext;
 }
 
 interface IComponent extends IComponentProps, IComponentActions { }

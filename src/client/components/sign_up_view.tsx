@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 interface IComponentProps {
-  context: IContext;
+  context: IAccountsUiContext;
 }
 
 interface IComponentActions {
@@ -22,7 +22,7 @@ export default class SignUp extends Component<IComponent, {}> {
       return;
     }
 
-    const name = this.refs["email"]["value"];
+    const name = this.refs["name"]["value"];
     const email = this.refs["email"]["value"];
     const pass1 = this.refs["password"]["value"];
     const pass2 = this.refs["password-again"]["value"];

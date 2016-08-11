@@ -1,6 +1,6 @@
 Package.describe({
   name: 'tomi:accountsui-semanticui-redux',
-  version: '1.0.0',
+  version: '1.0.2',
   // Brief, one-line summary of the package.
   summary: 'Accounts UI for Semantic UI using Redux',
   // URL to the Git repository containing the source code for this package.
@@ -20,6 +20,7 @@ Package.onUse(function(api) {
   api.use('ecmascript');
   api.use('accounts-base');
   api.use('accounts-password');
+  api.use('alanning:roles@1.2.15');
 
   api.addFiles('dist/stylesheets/main.css', 'client');
 

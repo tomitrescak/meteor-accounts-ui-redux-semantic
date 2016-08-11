@@ -4,6 +4,7 @@ import context from "../configs/context";
 import actions from "../actions/accounts";
 const mapStateToProps = (state, origProps) => ({
     userName: origProps.showUserName ? state.accounts.user.profile.name : null,
+    userId: state.accounts.userId,
     context: context
 });
 const mapDispatchToProps = (dispatch, ownProps) => {

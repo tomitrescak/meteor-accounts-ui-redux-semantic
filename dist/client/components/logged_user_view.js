@@ -1,7 +1,14 @@
 import React, { Component } from "react";
+function waitInit() {
+    $("#userMenu").dropdown({ on: "hover" });
+}
 export default class UserView extends Component {
     render() {
         const mf = this.props.context.i18n.initTranslator("accounts");
+        if (!this.props.userId) {
+            return React.createElement("span", null);
+        }
+        ;
         return (React.createElement("div", {className: "ui dropdown item", id: "userMenu"}, 
             React.createElement("i", {className: "user icon"}), 
             this.props.userName, 
@@ -13,6 +20,9 @@ export default class UserView extends Component {
             )));
     }
     componentDidMount() {
-        $("#userMenu").dropdown({ on: "hover" });
+        waitInit();
+    }
+    componentDidUpdate() {
+        waitInit();
     }
 }

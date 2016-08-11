@@ -11,7 +11,7 @@ export interface IComponentProps {
   infos: string;
   viewType: string;
   token?: string;
-  context: IContext;
+  context: IAccountsUiContext;
 }
 
 export interface IComponentActions {
@@ -26,13 +26,13 @@ export interface IComponentActions {
   showRegister: () => void;
   signIn: (userName: string, password: string) => void;
   register: (name: string, email: string, pass1: string, pass2: string) => void;
-  context: IContext;
+  context: IAccountsUiContext;
 }
 
 export interface IComponent extends IComponentProps, IComponentActions {}
 
 export default class AccountsRoot extends Component<IComponent, {}> {
-  context: IContext;
+  context: IAccountsUiContext;
 
   render() {
     this.context = this.props.context;

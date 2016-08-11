@@ -1,4 +1,4 @@
-export default function({ i18n }: IContext) {
+export default function({ i18n }: IAccountsUiContext) {
   i18n.add("en", {
     accounts: {
       confirmEmail: "Confirm Your Email Address",

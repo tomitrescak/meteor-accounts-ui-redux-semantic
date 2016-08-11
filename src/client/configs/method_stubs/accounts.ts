@@ -1,4 +1,4 @@
-export default function({Meteor}: IContext) {
+export default function({Meteor}: IAccountsUiContext) {
   Meteor.methods({
     sendVerification: function(email: string) {
       check(email, String);

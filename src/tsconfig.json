@@ -42,7 +42,6 @@
   },
   "files": [
     "client/actions/accounts.ts",
-    "client/actions/general.ts",
     "client/actions/index.ts",
     "client/configs/accounts_config.ts",
     "client/configs/context.ts",

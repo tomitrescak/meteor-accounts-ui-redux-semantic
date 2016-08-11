@@ -5,7 +5,7 @@ import context from "../configs/context";
 import actions from "../actions/accounts";
 
 interface IProps {
-  context?: IContext;
+  context?: IAccountsUiContext;
 }
 
 const mapStateToProps = (state: IGlobalState) => ({
@@ -21,15 +21,15 @@ const mapDispatchToProps = (dispatch: any, ownProps: any): any => {
   return {
     clearMessages: () =>
       dispatch(actions.clearMessages()),
-    emailResetLink: (email: string, callback: IAsyncCallback) =>
+    emailResetLink: (email: string, callback: IAccountsUIAsyncCallback) =>
       dispatch(actions.emailResetLink(context, email, callback)),
-    signIn: (email: string, password: string, callback: IAsyncCallback) =>
+    signIn: (email: string, password: string, callback: IAccountsUIAsyncCallback) =>
       dispatch(actions.signIn(context, email, password, callback)),
     signOut: () =>
       dispatch(actions.signOut(context)),
-    emailVerification: (email: string, callback: IAsyncCallback) =>
+    emailVerification: (email: string, callback: IAccountsUIAsyncCallback) =>
       dispatch(actions.resendVerification(context, email, callback)),
-    resetPassword: (token: string, password: string, passwordConfirm: string, callback: IAsyncCallback) =>
+    resetPassword: (token: string, password: string, passwordConfirm: string, callback: IAccountsUIAsyncCallback) =>
       dispatch(actions.resetPassword(context, token, password, passwordConfirm, callback)),
     showForgotPassword: () =>
       dispatch(actions.showForgotPassword()),
@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch: any, ownProps: any): any => {
       dispatch(actions.showRegister()),
     showSignIn:  () =>
       dispatch(actions.showSignin()),
-    register: (name: string, email: string, password: string, passwordConfirmation: string, callback: IAsyncCallback) =>
+    register: (name: string, email: string, password: string, passwordConfirmation: string, callback: IAccountsUIAsyncCallback) =>
       dispatch(actions.register(context, name, email, password, passwordConfirmation, callback)),
     context: context
   };

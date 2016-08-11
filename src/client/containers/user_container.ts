@@ -5,12 +5,13 @@ import context from "../configs/context";
 import actions from "../actions/accounts";
 
 interface IProps {
-  context?: IContext;
+  context?: IAccountsUiContext;
   showUserName?: boolean;
 }
 
 const mapStateToProps = (state: IGlobalState, origProps: IProps) => ({
   userName: origProps.showUserName ? state.accounts.user.profile.name : null,
+  userId: state.accounts.userId,
   context: context
 });
 

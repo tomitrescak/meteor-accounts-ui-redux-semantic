@@ -8,7 +8,7 @@ export default class SignUp extends Component {
         if (!$("#signUpForm").form("is valid")) {
             return;
         }
-        const name = this.refs["email"]["value"];
+        const name = this.refs["name"]["value"];
         const email = this.refs["email"]["value"];
         const pass1 = this.refs["password"]["value"];
         const pass2 = this.refs["password-again"]["value"];

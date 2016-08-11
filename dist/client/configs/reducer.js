@@ -1,37 +1,44 @@
-import * as Actions from "../actions/accounts";
+import * as Actions from '../actions/accounts';
+import context from './context';
+const a = context.__;
 let localState;
 function showError(state, error, info) {
     return Object.assign({}, state, { error: error, info: info });
 }
 function clearUser() {
-    return { user: null, view: "signIn" };
+    return { user: null, userId: null, view: 'signIn' };
 }
 function assignUser(state, user) {
-    return Object.assign({}, state, { user: user, view: "loggedIn" });
+    return Object.assign({}, state, { user: user, userId: user._id, view: 'loggedIn' });
+}
+function changeLoggingIn(state, loggingIn) {
+    return Object.assign({}, state, { loggingIn });
 }
 function showSignIn(state) {
-    return Object.assign({}, state, { view: "signIn", error: "", info: "" });
+    return Object.assign({}, state, { view: 'signIn', error: '', info: '' });
 }
 function showResendVerification(state) {
-    return Object.assign({}, state, { view: "resendVerification", error: "", info: "" });
+    return Object.assign({}, state, { view: 'resendVerification', error: '', info: '' });
 }
 function showRegister(state) {
-    return Object.assign({}, state, { view: "register", error: "", info: "" });
+    return Object.assign({}, state, { view: 'register', error: '', info: '' });
 }
 function showForgotPassword(state) {
-    return Object.assign({}, state, { view: "forgotPassword", error: "", info: "" });
+    return Object.assign({}, state, { view: 'forgotPassword', error: '', info: '' });
 }
 function showResetPassword(state, token) {
-    return Object.assign({}, state, { view: "resetPassword", error: "", info: "", token: token });
+    return Object.assign({}, state, { view: 'resetPassword', error: '', info: '', token: token });
 }
 function clearErrors(state) {
-    return Object.assign({}, state, { error: "", info: "" });
+    return Object.assign({}, state, { error: '', info: '' });
 }
 function setToken(state, token) {
     return Object.assign({}, state, { token });
 }
-export default function (state = { view: "signIn", error: "" }, action) {
+export default function (state = { view: 'signIn', error: '', loggingIn: false }, action) {
     switch (action.type) {
+        case Actions.CHANGE_LOGGING_IN:
+            return changeLoggingIn(state, action.loggingIn);
         case Actions.CLEAR_MESSAGES:
             return clearErrors(state);
         case Actions.SHOW_ERROR:

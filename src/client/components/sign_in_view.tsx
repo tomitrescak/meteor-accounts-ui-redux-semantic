@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Form, Field, Label, Input, Icon } from "semantic-react";
 
 interface IComponentProps {
-  context: IContext;
+  context: IAccountsUiContext;
 }
 
 interface IComponentActions {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 interface IComponentProps {
-  context: IContext;
+  context: IAccountsUiContext;
 }
 
 interface IComponentActions {

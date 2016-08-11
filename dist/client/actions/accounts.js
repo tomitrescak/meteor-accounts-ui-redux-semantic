@@ -7,6 +7,7 @@ export const SHOW_FORGOT = "ACCOUNTS: Show Forgot Password";
 export const CLEAR_USER = "ACCOUNTS: Clear User";
 export const ASSIGN_USER = "ACCOUNTS: Assign User";
 export const SET_TOKEN = "ACCOUNTS: Set Token";
+export const CHANGE_LOGGING_IN = "ACCOUNTS: Change Logging In";
 export const SHOW_ERROR = "ACCOUNTS_ERROR";
 export const SHOW_MESSAGE = "ACCOUNTS_MESSAGE";
 const actions = {
@@ -33,6 +34,9 @@ const actions = {
     },
     assignUser(user) {
         return { type: ASSIGN_USER, user };
+    },
+    changeLoggingIn(loggingIn) {
+        return { type: CHANGE_LOGGING_IN, loggingIn };
     },
     clearUser() {
         return { type: CLEAR_USER };

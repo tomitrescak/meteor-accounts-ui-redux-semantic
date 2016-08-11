@@ -26,7 +26,7 @@ export function isValidPassword(dispatch: any, password: string) {
   return true;
 };
 
-export function areValidPasswords(dispatch: IDispatch, password: string, confirm: string) {
+export function areValidPasswords(dispatch: IAccountsUiIDispatch, password: string, confirm: string) {
   if (!isValidPassword(dispatch, password)) {
     dispatch("accounts.error.differentPasswords");
     return false;

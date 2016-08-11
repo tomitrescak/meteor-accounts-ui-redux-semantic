@@ -8,6 +8,7 @@ export const SHOW_FORGOT = "ACCOUNTS: Show Forgot Password";
 export const CLEAR_USER = "ACCOUNTS: Clear User";
 export const ASSIGN_USER = "ACCOUNTS: Assign User";
 export const SET_TOKEN = "ACCOUNTS: Set Token";
+export const CHANGE_LOGGING_IN = "ACCOUNTS: Change Logging In";
 
 export const SHOW_ERROR = "ACCOUNTS_ERROR";
 export const SHOW_MESSAGE = "ACCOUNTS_MESSAGE";
@@ -37,51 +38,54 @@ const actions = {
   assignUser(user: any) {
     return { type: ASSIGN_USER, user };
   },
+  changeLoggingIn(loggingIn: boolean) {
+    return { type: CHANGE_LOGGING_IN, loggingIn };
+  },
   clearUser() {
     return { type: CLEAR_USER };
   },
   setToken(token: string) {
     return { type: SET_TOKEN, token };
   },
-  signOut({ Meteor }: IContext) {
-    return function(dispatch: IDispatch) {
+  signOut({ Meteor }: IAccountsUiContext) {
+    return function(dispatch: IAccountsUiIDispatch) {
       signOut(Meteor, dispatch);
     };
   },
-  signIn({ Meteor }: IContext, email: string, password: string, callback: Function) {
-    return function(dispatch: IDispatch) {
+  signIn({ Meteor }: IAccountsUiContext, email: string, password: string, callback: Function) {
+    return function(dispatch: IAccountsUiIDispatch) {
       signIn(dispatch, Meteor, email, password, callback);
     };
   },
-  resendVerification({ Meteor }: IContext, email: string, callback: Function) {
-    return function(dispatch: IDispatch) {
+  resendVerification({ Meteor }: IAccountsUiContext, email: string, callback: Function) {
+    return function(dispatch: IAccountsUiIDispatch) {
       resendVerification(dispatch, Meteor, email, callback);
     };
   },
-  emailResetLink({ Accounts }: IContext, email: string, callback: Function) {
-    return function(dispatch: IDispatch) {
+  emailResetLink({ Accounts }: IAccountsUiContext, email: string, callback: Function) {
+    return function(dispatch: IAccountsUiIDispatch) {
       emailResetLink(dispatch, Accounts, email, callback);
     };
   },
-  resetPassword({ Accounts }: IContext, passwordResetToken: string, password: string, passwordConfirm: string, callback: IAsyncCallback) {
-    return function(dispatch: IDispatch) {
+  resetPassword({ Accounts }: IAccountsUiContext, passwordResetToken: string, password: string, passwordConfirm: string, callback: IAccountsUIAsyncCallback) {
+    return function(dispatch: IAccountsUiIDispatch) {
       resetPassword(dispatch, Accounts, passwordResetToken, password, passwordConfirm, callback);
     };
   },
-  register({ Meteor, Accounts }: IContext, name: string, email: string, password: string, passwordConfirm: string, callback: IAsyncCallback) {
-    return function(dispatch: IDispatch) {
+  register({ Meteor, Accounts }: IAccountsUiContext, name: string, email: string, password: string, passwordConfirm: string, callback: IAccountsUIAsyncCallback) {
+    return function(dispatch: IAccountsUiIDispatch) {
       register(dispatch, Meteor, Accounts, name, email, password, passwordConfirm, callback);
     };
   }
 };
 
-function errorDispatch(dispatch: IDispatch) {
+function errorDispatch(dispatch: IAccountsUiIDispatch) {
   return (message: string) => {
     dispatch(actions.showError(message));
   };
 }
 
-function signIn(dispatch: IDispatch, Meteor: IMeteor, email: string, password: string, callback: Function): any {
+function signIn(dispatch: IAccountsUiIDispatch, Meteor: IAccountsUiMeteor, email: string, password: string, callback: Function): any {
   dispatch(actions.clearMessages());
 
   const ed = errorDispatch(dispatch);
@@ -103,7 +107,7 @@ function signIn(dispatch: IDispatch, Meteor: IMeteor, email: string, password: s
   });
 }
 
-function signOut(Meteor: IMeteor, dispatch: IDispatch) {
+function signOut(Meteor: IAccountsUiMeteor, dispatch: IAccountsUiIDispatch) {
   dispatch(actions.clearMessages());
 
   Meteor.logout(function() {
@@ -112,7 +116,7 @@ function signOut(Meteor: IMeteor, dispatch: IDispatch) {
   });
 }
 
-function resendVerification(dispatch: IDispatch, Meteor: IMeteor, email: string, callback: Function) {
+function resendVerification(dispatch: IAccountsUiIDispatch, Meteor: IAccountsUiMeteor, email: string, callback: Function) {
   const ed = errorDispatch(dispatch);
 
   if (!isNotEmpty(ed, email) || !isEmail(ed, email)) {
@@ -137,7 +141,7 @@ function resendVerification(dispatch: IDispatch, Meteor: IMeteor, email: string,
 
 }
 
-function emailResetLink(dispatch: IDispatch, Accounts: IAccounts, email: string, callback: Function) {
+function emailResetLink(dispatch: IAccountsUiIDispatch, Accounts: IAccountsUiAccounts, email: string, callback: Function) {
   const ed = errorDispatch(dispatch);
 
   if (!isNotEmpty(ed, email) || !isEmail(ed, email)) {
@@ -159,7 +163,7 @@ function emailResetLink(dispatch: IDispatch, Accounts: IAccounts, email: string,
   });
 }
 
-function resetPassword(dispatch: IDispatch, Accounts: IAccounts, token: string, password: string, passwordConfirm: string, callback: Function): void {
+function resetPassword(dispatch: IAccountsUiIDispatch, Accounts: IAccountsUiAccounts, token: string, password: string, passwordConfirm: string, callback: Function): void {
   const ed = errorDispatch(dispatch);
 
   if (!isNotEmpty(ed, password) || areValidPasswords(ed, password, passwordConfirm)) {
@@ -182,7 +186,7 @@ function resetPassword(dispatch: IDispatch, Accounts: IAccounts, token: string, 
 
 }
 
-function register(dispatch: IDispatch, Meteor: IMeteor, Accounts: IAccounts, name: string, email: string, password: string, passwordConfirm: string, callback: any) {
+function register(dispatch: IAccountsUiIDispatch, Meteor: IAccountsUiMeteor, Accounts: IAccountsUiAccounts, name: string, email: string, password: string, passwordConfirm: string, callback: any) {
   const ed = errorDispatch(dispatch);
 
   let data = {

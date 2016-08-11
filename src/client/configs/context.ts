@@ -6,40 +6,41 @@ import methodStubs from "./method_stubs/accounts";
 import accountsConfig from "./accounts_config";
 import i18nConfig from "./i18n";
 import actions from "../actions/accounts";
+import { Roles } from "meteor/alanning:roles";
 
 // import "../stylesheets/main";
 
 declare global {
-  export interface IContext {
+  export interface IAccountsUiContext {
     Meteor: typeof Meteor;
     Accounts: typeof Accounts;
     i18n: typeof i18n;
     __: typeof __;
-    dispatch: IDispatch
+    dispatch: IAccountsUiIDispatch
   }
 
-  export interface IAsyncCallback {
+  export interface IAccountsUIAsyncCallback {
     (err: Error, result: any): void;
   }
 
-  export interface IDispatch {
+  export interface IAccountsUiIDispatch {
     (actionCreator: any): void;
   }
 
-  export interface IMeteor {
+  export interface IAccountsUiMeteor {
     call(...params: any[]): void;
-    loginWithPassword(login: string, password: string, callback: IAsyncCallback): void;
-    logout(callback: IAsyncCallback): void;
+    loginWithPassword(login: string, password: string, callback: IAccountsUIAsyncCallback): void;
+    logout(callback: IAccountsUIAsyncCallback): void;
     user(): Meteor.User;
   }
 
-  export interface IAccounts {
-    forgotPassword(email: Object, callback: IAsyncCallback): any;
-    resetPassword(token: string, password: string, callback: IAsyncCallback): any;
+  export interface IAccountsUiAccounts {
+    forgotPassword(email: Object, callback: IAccountsUIAsyncCallback): any;
+    resetPassword(token: string, password: string, callback: IAccountsUIAsyncCallback): any;
   }
 }
 
-let context: IContext = {
+let context: IAccountsUiContext = {
   i18n,
   __,
   Meteor,
@@ -60,14 +61,37 @@ function dispatch(func: any) {
   }
 }
 
+const extensions = (id: string) => {
+  return {
+    isRole(role: string) {
+      return Roles.userIsInRole(id, role);
+    },
+    isAdmin() {
+      return Roles.userIsInRole(id, "admin");
+    }
+  };
+};
+
 // init tracker which will monitor the user and dispatch actions when necessary
 
 let muser: Meteor.User = null;
+let mloggingIn = false;
+
 Tracker.autorun(() => {
-  const user = Meteor.user();
+  let user = Meteor.user();
+  let loggingIn = Meteor.loggingIn();
+
+  if (loggingIn !== mloggingIn) {
+    dispatch(actions.changeLoggingIn(loggingIn));
+    mloggingIn = loggingIn;
+  }
 
   if (user) {
     if (!muser) {
+      // add role extensions
+      user = Object.assign(user, extensions(user._id));
+
+      // add this user to the store
       dispatch(actions.assignUser(user));
     }
   } else {
