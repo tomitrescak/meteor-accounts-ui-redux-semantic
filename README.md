@@ -27,7 +27,7 @@ The package adds two different components
 This is the example on how you can use it in the page:
 
 ```javascript
-import { AccountsView, UserView } from 'meteor/tomi:accountsui-semanticui-redux';
+import { AccountsView, UserView } from 'apollo-authentication-semantic-ui';
 
 const component = () => {
   <div>
