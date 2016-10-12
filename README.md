@@ -7,7 +7,7 @@ The Accounts UI component based on Redux and Semantic UI.
 Add the accounts reducer to your list of reducers. From this moment on, your account info along with the currently logged user will be stored in your store under "accounts" key.
 
 ```javascript
-import { reducer as accountsReducer } from 'meteor/tomi:accountsui-semanticui-redux';
+import { reducer as accountsReducer } from 'apollo-authentication-semantic-ui';
 
 // import all other reducers
 
