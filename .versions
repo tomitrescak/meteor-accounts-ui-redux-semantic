@@ -27,7 +27,7 @@ html-tools@1.0.10
 htmljs@1.0.10
 id-map@1.0.8
 jquery@1.11.9
-local-test:tomi:accountsui-semanticui-redux@1.0.1
+local-test:tomi:accountsui-semanticui-redux@1.0.2
 localstorage@1.0.11
 logging@1.0.13
 meteor@1.1.15
@@ -53,7 +53,7 @@ spacebars-compiler@1.0.12
 srp@1.0.9
 tinytest@1.0.11
 tomi:accountsui-semanticui-react@0.0.1
-tomi:accountsui-semanticui-redux@1.0.1
+tomi:accountsui-semanticui-redux@1.0.2
 tracker@1.0.14
 ui@1.0.11
 underscore@1.0.9
