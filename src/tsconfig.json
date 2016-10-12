@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "declaration": false,
+    "declaration": true,
     "noImplicitAny": true,
     "removeComments": false,
     "noLib": false,
@@ -29,45 +29,7 @@
     "placeOpenBraceOnNewLineForFunctions": false,
     "placeOpenBraceOnNewLineForControlBlocks": false
   },
-  "filesGlob": [
-    "!node_modules",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
   "exclude": [
     "node_modules"
-  ],
-  "atom": {
-    "rewriteTsconfig": true
-  },
-  "files": [
-    "actions/accounts.ts",
-    "actions/index.ts",
-    "configs/context.ts",
-    "configs/helpers.ts",
-    "configs/i18n.ts",
-    "configs/reducer.ts",
-    "configs/user_model.ts",
-    "containers/accounts_container.ts",
-    "containers/user_container.ts",
-    "index.ts",
-    "typings/apollo-mantra.d.ts",
-    "typings/jquery/jquery.d.ts",
-    "typings/modules/react-redux/index.d.ts",
-    "typings/packages/i18n-client.d.ts",
-    "typings/packages/jsx_controls.d.ts",
-    "typings/packages/mantra.d.ts",
-    "typings/packages/semantic_ui.d.ts",
-    "typings/react/react-dom.d.ts",
-    "typings/react/react.d.ts",
-    "typings/semantic-react/semantic-react.d.ts",
-    "components/accounts_root_view.tsx",
-    "components/forgot_password_view.tsx",
-    "components/log_out_view.tsx",
-    "components/logged_user_view.tsx",
-    "components/resend_verification_view.tsx",
-    "components/reset_password_view.tsx",
-    "components/sign_in_view.tsx",
-    "components/sign_up_view.tsx"
   ]
 }

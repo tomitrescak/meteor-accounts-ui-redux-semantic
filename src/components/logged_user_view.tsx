@@ -10,7 +10,7 @@ export interface IComponentActions {
   signOut: () => void;
 }
 
-interface IComponent extends IComponentProps, IComponentActions { }
+export interface IComponent extends IComponentProps, IComponentActions { }
 
 function waitInit() {
   $('#userMenu').dropdown({ on: 'hover' });

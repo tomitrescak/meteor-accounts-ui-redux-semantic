@@ -1,17 +1,17 @@
 import * as React from 'react';
 
-interface IComponentProps {
+export interface IComponentProps {
   context: AccountsUI.Context;
 }
 
-interface IComponentActions {
+export interface IComponentActions {
   clearMessages: () => void;
   resetPassword: (token: string, pass1: string, pass2: string, callback: Function) => void;
   showSignIn: () => void;
   token: string;
 }
 
-interface IComponent extends IComponentProps, IComponentActions { }
+export interface IComponent extends IComponentProps, IComponentActions { }
 
 export default class ResetPassword extends React.Component<IComponent, {}> {
   context: AccountsUI.Context;

@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-interface IComponentProps {
+export interface IComponentProps {
   context: AccountsUI.Context;
 }
 
-interface IComponentActions {
+export interface IComponentActions {
   clearMessages: () => void;
   showForgotPassword: () => void;
   showResendVerification: () => void;
@@ -12,7 +12,7 @@ interface IComponentActions {
   signIn: (userName: string, password: string, callback: Function) => void;
 }
 
-interface IComponent extends IComponentProps, IComponentActions { }
+export interface IComponent extends IComponentProps, IComponentActions { }
 
 export default class SignIn extends React.Component<IComponent, {}> {
   signIn() {

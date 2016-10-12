@@ -1,16 +1,16 @@
 import * as React from 'react';
 
-interface IComponentProps {
+export interface IComponentProps {
   context: AccountsUI.Context;
 }
 
-interface IComponentActions {
+export interface IComponentActions {
   clearMessages: () => void;
   emailVerification: (email: string, callback: Function) => void;
   showSignIn: () => void;
 }
 
-interface IComponent extends IComponentProps, IComponentActions { }
+export interface IComponent extends IComponentProps, IComponentActions { }
 
 export default class ResendVerification extends React.Component<IComponent, {}> {
   emailVerification() {

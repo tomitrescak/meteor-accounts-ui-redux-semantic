@@ -2,6 +2,7 @@ import Component, { IComponentProps, IComponentActions } from '../components/log
 import { connect } from 'react-redux';
 import context from '../configs/context';
 import actions from '../actions/accounts';
+import { mayBeStubbed } from 'react-stubber';
 
 interface IProps {
   context?: AccountsUI.Context;
@@ -21,4 +22,4 @@ const mapDispatchToProps = (dispatch: any, ownProps: any): IComponentActions => 
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default mayBeStubbed(connect(mapStateToProps, mapDispatchToProps)(Component));
