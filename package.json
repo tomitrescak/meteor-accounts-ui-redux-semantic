@@ -1,0 +1,33 @@
+{
+  "name": "apollo-authentication-semantic-ui",
+  "version": "0.0.2",
+  "description": "UI for apollo authentication",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://tomitrescak@github.com/tomitrescak/apollo-authentication-semantic-ui.git"
+  },
+  "keywords": [
+    "Apollo",
+    "Authentication"
+  ],
+  "author": "Tomi Trescak",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tomitrescak/apollo-authentication-semantic-ui/issues"
+  },
+  "homepage": "https://github.com/tomitrescak/apollo-authentication-semantic-ui#readme",
+  "peerDependencies": {
+    "apollo-client": "^0.4.13",
+    "apollo-mantra": "^1.1.0",
+    "i18n-client": "0.0.6",
+    "react": "^15.3.1",
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2",
+    "sweetalert2": "^4.1.9"
+  }
+}
