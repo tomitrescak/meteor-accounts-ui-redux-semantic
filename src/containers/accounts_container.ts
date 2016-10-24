@@ -1,7 +1,7 @@
 import Component from '../components/accounts_root_view';
 import { connect } from 'react-redux';
 import context from '../configs/context';
-import actions from '../actions/accounts';
+import actions, { config } from '../actions/accounts';
 import { mayBeStubbed } from 'react-stubber';
 
 interface IProps {
@@ -23,13 +23,13 @@ const mapDispatchToProps = (dispatch: any, ownProps: any): any => {
     emailResetLink: (email: string, callback: AccountsUI.AsyncCallback) =>
       dispatch(actions.emailResetLink(context, email, callback)),
     signIn: (email: string, password: string, callback: AccountsUI.AsyncCallback) =>
-      dispatch(actions.signIn(context, email, password, callback)),
+      dispatch(actions.signIn(context, email, password, config.profileData, callback)),
     signOut: () =>
       dispatch(actions.logOut()),
     emailVerification: (email: string, callback: AccountsUI.AsyncCallback) =>
       dispatch(actions.resendVerification(context, email, callback)),
     resetPassword: (token: string, password: string, passwordConfirm: string, callback: AccountsUI.AsyncCallback) =>
-      dispatch(actions.resetPassword(context, token, password, passwordConfirm, callback)),
+      dispatch(actions.resetPassword(context, token, password, passwordConfirm, config.profileData, callback)),
     showForgotPassword: () =>
       dispatch(actions.showForgotPassword()),
     showResendVerification:  () =>
@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch: any, ownProps: any): any => {
     showSignIn:  () =>
       dispatch(actions.showSignin()),
     register: (name: string, email: string, password: string, passwordConfirmation: string, callback: AccountsUI.AsyncCallback) =>
-      dispatch(actions.register(context, name, email, password, passwordConfirmation, callback)),
+      dispatch(actions.register(context, name, email, password, passwordConfirmation, config.profileData, callback)),
     context: context
   };
 };

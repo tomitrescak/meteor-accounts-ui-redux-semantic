@@ -1,12 +1,13 @@
 {
   "name": "apollo-authentication-semantic-ui",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "UI for apollo authentication",
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://tomitrescak@github.com/tomitrescak/apollo-authentication-semantic-ui.git"

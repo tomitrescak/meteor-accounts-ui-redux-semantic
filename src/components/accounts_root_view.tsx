@@ -32,6 +32,8 @@ export interface IComponentActions {
 export interface IComponent extends IComponentProps, IComponentActions {}
 
 export default class AccountsRoot extends React.Component<IComponent, {}> {
+  static displayName = 'AccountsView';
+
   context: AccountsUI.Context;
 
   render() {

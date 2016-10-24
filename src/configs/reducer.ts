@@ -15,90 +15,98 @@ if (initialToken) {
 }
 const verifyToken = getParameterByName('verifyEmail');
 
+
+interface ObjectConstructor {
+  assign(object: any, ...params: any[]): Object;
+}
+
+export interface IState<T> {
+  view?: string;
+  error?: string;
+  info?: string;
+  token?: string;
+  user?: T;
+  userId?: string;
+  loggingIn?: boolean;
+}
+
+interface IAction {
+  type: string;
+}
+
 declare global {
-  interface ObjectConstructor {
-    assign(object: any, ...params: any[]): Object;
-  }
-
-  interface IGlobalState {
-    accounts: IState;
-  }
-
-  interface IState {
-    view?: string;
-    error?: string;
-    info?: string;
-    token?: string;
-    user?: any;
-    userId?: string;
-    loggingIn?: boolean;
-  }
-
-  interface IAction {
-    type: string;
+  export interface IGlobalState {
+    accounts: IState<User>;
   }
 }
 
-function showError(state: IState, error: string, info?: string) {
+function showError(state: IState<User>, error: string, info?: string) {
   return Object.assign({}, state, { error: error, info: info });
 }
 
 function logOut(): any {
-  // remove token from the sotrage
-  localStorage.removeItem('jwtToken');
-  localStorage.removeItem('jwtTokenExpiration');
+  // remove token from the storage
+  if (window && window.localStorage) {
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('jwtTokenExpiration');
+  }
   return { user: null, userId: null, view: 'signIn' };
 }
 
-function logIn(state: IState, data: any): any {
-  localStorage.setItem('jwtToken', data.hashedToken);
-  localStorage.setItem('jwtTokenExpiration', data.expires);
+function logIn(state: IState<User>, data: any): any {
+  if (window && window.localStorage) {
+    localStorage.setItem('jwtToken', data.hashedToken);
+    localStorage.setItem('jwtTokenExpiration', data.expires);
+  }
   return Object.assign({}, state, { user: new User(data.user), userId: data.user._id, view: 'loggedIn' });
 }
 
-function changeLoggingIn(state: IState, loggingIn: boolean) {
+function changeLoggingIn(state: IState<User>, loggingIn: boolean) {
   return Object.assign({}, state, { loggingIn });
 }
 
-function showSignIn(state: IState) {
+function showSignIn(state: IState<User>) {
   return Object.assign({}, state, { view: 'signIn', error: '', info: '' });
 }
 
-function showResendVerification(state: IState) {
+function showResendVerification(state: IState<User>) {
   return Object.assign({}, state, { view: 'resendVerification', error: '', info: '' });
 }
 
-function showRegister(state: IState) {
+function showRegister(state: IState<User>) {
   return Object.assign({}, state, { view: 'register', error: '', info: '' });
 }
 
-function showForgotPassword(state: IState) {
+function showForgotPassword(state: IState<User>) {
   return Object.assign({}, state, { view: 'forgotPassword', error: '', info: '' });
 }
 
-function showResetPassword(state: IState, token: string) {
+function showResetPassword(state: IState<User>, token: string) {
   return Object.assign({}, state, { view: 'resetPassword', error: '', info: '', token: token });
 }
 
-function clearErrors(state: IState) {
+function clearErrors(state: IState<User>) {
   return Object.assign({}, state, { error: '', info: '' });
 }
 
-function setToken(state: IState, token: string) {
+function setToken(state: IState<User>, token: string) {
   return Object.assign({}, state, { token });
 }
 
-export default function initReducer(context: any) {
+export default function initReducer(context: any, profileData: string) {
 
   function resume() {
-    if (context != null && context() && context().Store) {
+    if (context != null && context() && context().Store && window && window.localStorage) {
 
       const dispatch = context().Store.dispatch;
+
+      // setup profile data
+      actions.config.profileData = profileData;
 
       // verify
 
       if (verifyToken) {
-        dispatch(actions.default.verify(verifyToken));
+        dispatch(actions.default.verify(verifyToken, profileData));
         return;
       }
 
@@ -108,7 +116,7 @@ export default function initReducer(context: any) {
       const expiration = parseInt(localStorage.getItem('jwtTokenExpiration'), 10);
 
       if (token && token !== 'null') {
-        dispatch(actions.default.resume(token, expiration));
+        dispatch(actions.default.resume(token, expiration, profileData));
       }
     } else {
       setTimeout(resume, 100);
@@ -116,7 +124,7 @@ export default function initReducer(context: any) {
   }
   setTimeout(resume, 1);
 
-  return (state: IState = { view: defaultView, error: '', loggingIn: false, token: initialToken }, action: any) => {
+  return (state: IState<User> = { view: defaultView, error: '', loggingIn: false, token: initialToken }, action: any) => {
     switch (action.type) {
       case actions.LOGOUT:
         return logOut();

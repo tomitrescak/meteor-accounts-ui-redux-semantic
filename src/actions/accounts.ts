@@ -16,6 +16,10 @@ export const CHANGE_LOGGING_IN = 'ACCOUNTS: Change Logging In';
 export const SHOW_ERROR = 'ACCOUNTS_ERROR';
 export const SHOW_MESSAGE = 'ACCOUNTS_MESSAGE';
 
+export const config = {
+  profileData: 'name'
+};
+
 const actions = {
   clearMessages() {
     return { type: CLEAR_MESSAGES };
@@ -53,9 +57,9 @@ const actions = {
   logIn(data: any) {
     return { type: LOGIN, data };
   },
-  signIn(_: AccountsUI.Context, email: string, password: string, callback: Function) {
+  signIn(_: AccountsUI.Context, email: string, password: string, profileData: string, callback: Function) {
     return function(dispatch: Function) {
-      signIn(dispatch, email, password, callback);
+      signIn(dispatch, email, password, profileData, callback);
     };
   },
   resendVerification(_: AccountsUI.Context, email: string, callback: Function) {
@@ -68,24 +72,24 @@ const actions = {
       emailResetLink(dispatch, email, callback);
     };
   },
-  resetPassword(_: AccountsUI.Context, passwordResetToken: string, password: string, passwordConfirm: string, callback: AccountsUI.AsyncCallback) {
+  resetPassword(_: AccountsUI.Context, passwordResetToken: string, password: string, passwordConfirm: string, profileData: string, callback: AccountsUI.AsyncCallback) {
     return function(dispatch: Function) {
-      resetPassword(dispatch, passwordResetToken, password, passwordConfirm, callback);
+      resetPassword(dispatch, passwordResetToken, password, passwordConfirm, profileData, callback);
     };
   },
-  register(_: AccountsUI.Context, name: string, email: string, password: string, passwordConfirm: string, callback: AccountsUI.AsyncCallback) {
+  register(_: AccountsUI.Context, name: string, email: string, password: string, passwordConfirm: string, profileData: string, callback: AccountsUI.AsyncCallback) {
     return function(dispatch: Function) {
-      register(dispatch, name, email, password, passwordConfirm, callback);
+      register(dispatch, name, email, password, passwordConfirm, profileData, callback);
     };
   },
-  resume(token: string, tokenExpiration: number) {
+  resume(token: string, tokenExpiration: number, profileData: string) {
     return function(dispatch: Function) {
-      resume(dispatch, token, tokenExpiration);
+      resume(dispatch, token, tokenExpiration, profileData);
     };
   },
-  verify(token: string) {
+  verify(token: string, profileData: string) {
     return function(dispatch: Function) {
-      verify(dispatch, token);
+      verify(dispatch, token, profileData);
     };
   }
 };
@@ -96,7 +100,7 @@ function errorDispatch(dispatch: Function) {
   };
 }
 
-function resume(dispatch: Function, token: string, tokenExpiration: number) {
+function resume(dispatch: Function, token: string, tokenExpiration: number, profileData: string) {
   if (new Date().getTime() > tokenExpiration) {
     dispatch(actions.logOut());
     return;
@@ -112,7 +116,7 @@ function resume(dispatch: Function, token: string, tokenExpiration: number) {
         user {
           _id
           profile {
-            name
+            ${profileData}
           }
           roles
         }
@@ -132,7 +136,7 @@ function resume(dispatch: Function, token: string, tokenExpiration: number) {
   }));
 }
 
-function signIn(dispatch: Function, email: string, password: string, callback: Function): any {
+function signIn(dispatch: Function, email: string, password: string, profileData: string, callback: Function): any {
   dispatch(actions.clearMessages());
 
   const ed = errorDispatch(dispatch);
@@ -150,7 +154,7 @@ function signIn(dispatch: Function, email: string, password: string, callback: F
         user {
           _id
           profile {
-            name
+            ${profileData}
           }
           roles
         }
@@ -254,7 +258,7 @@ function emailResetLink(dispatch: Function, email: string, callback: Function) {
   }));
 }
 
-function resetPassword(dispatch: Function, token: string, password: string, passwordConfirm: string, callback: Function): void {
+function resetPassword(dispatch: Function, token: string, password: string, passwordConfirm: string, profileData: string, callback: Function): void {
   const ed = errorDispatch(dispatch);
 
   if (!isNotEmpty(ed, password) || !areValidPasswords(ed, password, passwordConfirm)) {
@@ -269,7 +273,7 @@ function resetPassword(dispatch: Function, token: string, password: string, pass
         user {
           _id
           profile {
-            name
+            ${profileData}
           }
           roles
         }
@@ -311,7 +315,7 @@ function resetPassword(dispatch: Function, token: string, password: string, pass
   }));
 }
 
-function verify(dispatch: Function, token: string): void {
+function verify(dispatch: Function, token: string, profileData: string): void {
   const ed = errorDispatch(dispatch);
 
   dispatch(mutation({
@@ -322,7 +326,7 @@ function verify(dispatch: Function, token: string): void {
         user {
           _id
           profile {
-            name
+            ${profileData}
           }
           roles
         }
@@ -360,7 +364,7 @@ function verify(dispatch: Function, token: string): void {
   }));
 }
 
-function register(dispatch: Function, name: string, email: string, password: string, passwordConfirm: string, callback: any) {
+function register(dispatch: Function, name: string, email: string, password: string, passwordConfirm: string, profileData: string, callback: any) {
   const ed = errorDispatch(dispatch);
 
   let user = {
@@ -383,7 +387,7 @@ function register(dispatch: Function, name: string, email: string, password: str
         user {
           _id
           profile {
-            name
+            ${profileData}
           }
           roles
         }

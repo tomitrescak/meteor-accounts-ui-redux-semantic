@@ -1,4 +1,4 @@
-import accounts from "./accounts";
+import accounts from './accounts';
 const actions = {
   accounts,
   // ACTION
