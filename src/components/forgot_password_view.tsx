@@ -1,8 +1,6 @@
 import * as React from 'react';
-
-export interface IComponentProps {
-  context: AccountsUI.Context;
-}
+import i18n from 'es2015-i18n-tag';
+import { Form, Grid, Button, Divider } from 'semantic-ui-react';
 
 export interface IComponentActions {
   clearMessages: () => void;
@@ -10,80 +8,45 @@ export interface IComponentActions {
   showSignIn: () => void;
 }
 
-export interface IComponent extends IComponentProps, IComponentActions { }
+export interface IComponent extends IComponentActions { }
 
-export default class ForgotPassword extends React.Component<IComponent, {}> {
-  emailResetLink() {
-    if ($('#emailButton').hasClass('loading')) {
-      return;
-    }
-    $('#forgotPasswordForm').form('validate form');
-    if (!$('#forgotPasswordForm').form('is valid')) {
-      return;
-    }
+export interface IState {
+  loading: boolean;
+}
 
-    $('#emailButton').addClass('loading');
-    const email = this.refs['email']['value'];
-    this.props.emailResetLink(email, () => {
-      $('#emailButton').removeClass('loading');
+export default class ForgotPassword extends React.Component<IComponent, IState> {
+  constructor() {
+    super();
+    this.state = { loading: false };
+  }
+
+  emailResetLink(e: any, serialisedForm: any) {
+    e.preventDefault();
+    this.setState({ loading: true });
+    this.props.emailResetLink(serialisedForm.email, () => {
+      this.setState({ loading: false });
     });
   }
 
   render() {
-    const mf = this.props.context.i18n.initTranslator('accounts');
 
     return (
-      <div id="forgotPasswordForm" className="ui login form">
-        <div className="field">
-          <label>{ mf('email') }</label>
-          <div className="ui icon input">
-            <input type="text" placeholder={ mf('emailAddress') } id="email" ref="email" />
-            <i className="mail icon" />
-          </div>
-        </div>
-        <div className="ui equal width center aligned grid">
-          <div className="first column">
-            <div className="primary submit icon labeled ui button" id="emailButton" onClick={this.emailResetLink.bind(this) }>
-              <i className="icon mail" />
-              { mf('emailResetLink') }
-            </div>
-          </div>
-          <div className="ui horizontal divider">
-            Or
-          </div>
-          <div className="last column">
-            <div className="green ui labeled icon button" id="signInButton" onClick={this.props.showSignIn.bind(this) }>
-              <i className="sign in icon" />
-              { mf('signIn') }
-            </div>
-          </div>
-        </div>
-      </div>
+      <Form onSubmit={this.emailResetLink.bind(this)}>
+        <Form.Input icon="mail" label={i18n`Email`} placeholder={i18n`Email Address`} name="email" />
+        <Grid centered className="equal width">
+          <Grid.Row>
+            <Grid.Column textAlign="center">
+              <Button type="submit" loading={this.state.loading} primary content={i18n`Email Reset Link`} icon="mail" />
+            </Grid.Column>
+          </Grid.Row>
+          <Divider horizontal>{i18n`Or`}</Divider>
+          <Grid.Row>
+            <Grid.Column textAlign="center">
+              <Button type="button" onClick={this.props.showSignIn} color="green" labelPosition="left" content={i18n`Sign In`} icon="signup" />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Form>
     );
-  }
-
-  componentDidMount() {
-    this.props.clearMessages();
-    const mf = this.props.context.i18n.initTranslator('accounts');
-
-    $('.ui.form')
-      .form({
-        inline: true,
-        fields: {
-          username: {
-            identifier: 'email',
-            rules: [
-              {
-                type: 'empty',
-                prompt: mf('error.emailRequired')
-              },
-              {
-                type: 'email',
-                prompt: mf('error.emailRequired')
-              }
-            ]
-          },
-        }
-      });
   }
 }

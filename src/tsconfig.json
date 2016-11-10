@@ -14,7 +14,14 @@
     "experimentalDecorators": true,
     "sourceMap": false,
     "allowSyntheticDefaultImports": true,
-    "watch": true
+    "watch": true,
+    "strictNullChecks": false,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
   },
   "formatCodeOptions": {
     "indentSize": 2,

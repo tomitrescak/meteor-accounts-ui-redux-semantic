@@ -1,3 +1,5 @@
+import i18n from 'es2015-i18n-tag';
+
 export function trimInput(value: string) {
   return value.replace(/^\s*|\s*$/g, '');
 };
@@ -6,7 +8,7 @@ export function isNotEmpty(dispatch: any, value: string) {
   if (value && value !== '') {
     return true;
   }
-  dispatch('accounts.error.requiredFields');
+  dispatch(i18n`Please specify all required fields`);
   return false;
 };
 
@@ -15,12 +17,13 @@ export function isEmail(dispatch: any, value: string) {
   if (filter.test(value)) {
     return true;
   }
-  dispatch('accounts.error.invalidEmail');
+  dispatch(i18n`Specified email has invalid format`);
   return false;
 };
 
 export function isValidPassword(dispatch: any, password: string) {
   if (password.length < 7) {
+    dispatch(i18n`Password needs to have at least 7 characters`);
     return false;
   }
   return true;
@@ -28,10 +31,10 @@ export function isValidPassword(dispatch: any, password: string) {
 
 export function areValidPasswords(dispatch: Function, password: string, confirm: string) {
   if (!isValidPassword(dispatch, password)) {
-    dispatch('accounts.error.differentPasswords');
     return false;
   }
   if (password !== confirm) {
+    dispatch(i18n`Passwords are different!`);
     return false;
   }
   return true;

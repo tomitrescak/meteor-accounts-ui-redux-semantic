@@ -74,7 +74,7 @@ declare module '~react-redux~redux' {
 declare module '~react-redux/react-redux' {
 
   import * as React from 'react';
-  import {IStore, IDispatch} from '~react-redux~redux';
+  import { IStore, IDispatch } from '~react-redux~redux';
 
   module ReactRedux {
 
@@ -93,12 +93,12 @@ declare module '~react-redux/react-redux' {
       withRef?: boolean;
     }
 
-    export function connect<TElement extends Function>(
+    export function connect<TElement>(
       mapStateToProps?: IMapStateToProps,
       mapDispatchToProps?: IMapDispatchToProps,
       mergeProps?: (stateProps: Object, dispatchProps: Object, ownProps: Object) => Object,
       options?: IConnectOptions
-    ): TElement;
+    ): (props: any) => React.StatelessComponent<TElement>;
   }
 
   export = ReactRedux;

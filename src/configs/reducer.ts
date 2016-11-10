@@ -4,8 +4,8 @@ import User from './user_model';
 // detect default view and find tokens in url
 
 function getParameterByName(name: string) {
-    let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
-    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+  let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+  return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
 
 let defaultView = 'signIn';
@@ -93,12 +93,41 @@ function setToken(state: IState<User>, token: string) {
   return Object.assign({}, state, { token });
 }
 
-export default function initReducer(context: any, profileData: string) {
+function processAction(state: IState<User>, action: any) {
+  switch (action.type) {
+    case actions.LOGOUT:
+      return logOut();
+    case actions.LOGIN:
+      return logIn(state, action.data);
+    case actions.CHANGE_LOGGING_IN:
+      return changeLoggingIn(state, action.loggingIn);
+    case actions.CLEAR_MESSAGES:
+      return clearErrors(state);
+    case actions.SHOW_ERROR:
+      return showError(state, action.message);
+    case actions.SHOW_MESSAGE:
+      return showError(state, null, action.message);
+    case actions.SHOW_SIGNIN:
+      return showSignIn(state);
+    case actions.SHOW_REGISTER:
+      return showRegister(state);
+    case actions.SHOW_VERIFICATION:
+      return showResendVerification(state);
+    case actions.SHOW_FORGOT:
+      return showForgotPassword(state);
+    case actions.SHOW_RESET_PASSWORD:
+      return showResetPassword(state, action.token);
+    case actions.SET_TOKEN:
+      return setToken(state, action.token);
+    default:
+      return state;
+  }
+}
 
+export default function initReducer(initStore: () => any, profileData: string, modifiers: (state: IState<User>, action: any) => IState<User>) {
   function resume() {
-    if (context != null && context() && context().Store && window && window.localStorage) {
-
-      const dispatch = context().Store.dispatch;
+    if (initStore && window && window.localStorage) {
+      const dispatch = initStore().dispatch;
 
       // setup profile data
       actions.config.profileData = profileData;
@@ -125,33 +154,10 @@ export default function initReducer(context: any, profileData: string) {
   setTimeout(resume, 1);
 
   return (state: IState<User> = { view: defaultView, error: '', loggingIn: false, token: initialToken }, action: any) => {
-    switch (action.type) {
-      case actions.LOGOUT:
-        return logOut();
-      case actions.LOGIN:
-        return logIn(state, action.data);
-      case actions.CHANGE_LOGGING_IN:
-        return changeLoggingIn(state, action.loggingIn);
-      case actions.CLEAR_MESSAGES:
-        return clearErrors(state);
-      case actions.SHOW_ERROR:
-        return showError(state, action.message);
-      case actions.SHOW_MESSAGE:
-        return showError(state, null, action.message);
-      case actions.SHOW_SIGNIN:
-        return showSignIn(state);
-      case actions.SHOW_REGISTER:
-        return showRegister(state);
-      case actions.SHOW_VERIFICATION:
-        return showResendVerification(state);
-      case actions.SHOW_FORGOT:
-        return showForgotPassword(state);
-      case actions.SHOW_RESET_PASSWORD:
-        return showResetPassword(state, action.token);
-      case actions.SET_TOKEN:
-        return setToken(state, action.token);
+    state = processAction(state, action);
+    if (modifiers) {
+      state = modifiers(state, action);
     }
-
     return state;
   };
 }

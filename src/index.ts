@@ -1,10 +1,6 @@
-import AccountsContainer from './containers/accounts_container';
-import UserContainer from './containers/user_container';
-import accountReducer from './configs/reducer';
-
-export const AccountsView = AccountsContainer;
-export const UserView = UserContainer;
-export const reducer = accountReducer;
+export { default as AccountsView } from './containers/accounts_container';
+export { default as UserView } from './containers/user_container';
+export { default as reducer }  from './configs/reducer';
 
 export { default as UserModel } from './configs/user_model';
 export { IState } from './configs/reducer';

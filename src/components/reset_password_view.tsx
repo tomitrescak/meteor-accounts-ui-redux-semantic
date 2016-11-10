@@ -1,8 +1,6 @@
 import * as React from 'react';
-
-export interface IComponentProps {
-  context: AccountsUI.Context;
-}
+import i18n from 'es2015-i18n-tag';
+import { Form, Grid, Button, Divider } from 'semantic-ui-react';
 
 export interface IComponentActions {
   clearMessages: () => void;
@@ -11,100 +9,48 @@ export interface IComponentActions {
   token: string;
 }
 
-export interface IComponent extends IComponentProps, IComponentActions { }
+export interface IComponent extends IComponentActions { }
 
-export default class ResetPassword extends React.Component<IComponent, {}> {
-  context: AccountsUI.Context;
+export interface IState {
+  loading: boolean;
+}
 
-  resetPassword() {
-    if ($('#resetPassword').hasClass('loading')) {
-      return;
-    }
+export default class ResetPassword extends React.Component<IComponent, IState> {
+  constructor() {
+    super();
+    this.state = { loading: false };
+  }
 
-    $('#resetPasswordForm').form('validate form');
-    if (!$('#resetPasswordForm').form('is valid')) {
-      return;
-    }
+  resetPassword(e: any, serialisedForm: any) {
+    e.preventDefault();
+    this.setState({ loading: true });
 
-    $('#resetPassword').addClass('loading');
-    const pass1 = this.refs['password']['value'];
-    const pass2 = this.refs['password-again']['value'];
-
-    this.props.resetPassword(this.props.token, pass1, pass2, () => {
-      $('#resetPassword').removeClass('loading');
+    this.props.resetPassword(this.props.token, serialisedForm.password1, serialisedForm.password2, () => {
+      this.setState({ loading: false });
     });
   }
 
   render() {
-    this.context = this.props.context;
-    const mf = this.props.context.i18n.initTranslator('accounts');
 
     return (
-      <div className="ui form login" id="resetPasswordForm">
-        <div className="field">
-          <label>{ mf('password') }</label>
-          <div className="ui icon input">
-            <input type="password" placeholder={ mf('password') } ref="password" id="password" />
-            <i className="lock icon" />
-          </div>
-        </div>
-        <div className="field">
-          <label>{ mf('passwordAgain') }</label>
-          <div className="ui icon input">
-            <input type="password" placeholder={ mf('passwordAgain') } ref="password-again" id="password-again" />
-            <i className="lock icon" />
-          </div>
-        </div>
-        <div className="ui equal width center aligned grid">
-          <div className="first column">
-            <div className="ui red submit button" id="resetPassword" onClick={this.resetPassword.bind(this) }>{ mf('resetYourPassword') }</div>
-          </div>
-          <div className="ui horizontal divider">
-            Or
-          </div>
-          <div className="center aligned column">
-            <div className="green ui labeled icon button" onClick={this.props.showSignIn}>
-              <i className="sign in icon" />
-              { mf('signIn') }
-            </div>
-          </div>
-        </div>
+      <Form onSubmit={this.resetPassword.bind(this)} method="post">
+        <Form.Input type="password" label={i18n`Password`} placeholder={i18n`Password`} name="password1" />
+        <Form.Input type="password" label={i18n`Password again`} placeholder={i18n`Password`} name="password2" />
 
-      </div>
+        <Grid centered className="equal width">
+          <Grid.Row>
+            <Grid.Column textAlign="center">
+              <Button type="submit" loading={this.state.loading} color="red" content={i18n`Reset Password`} />
+            </Grid.Column>
+          </Grid.Row>
+          <Divider horizontal>{i18n`Or`}</Divider>
+          <Grid.Row>
+            <Grid.Column textAlign="center">
+              <Button type="button" onClick={this.props.showSignIn} color="red" labelPosition="left" content={i18n`Sign In`} icon="signup" />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Form>
     );
-  }
-
-  componentDidMount() {
-    const mf = this.context.i18n.initTranslator('accounts');
-    this.props.clearMessages();
-
-    $('.ui.form')
-      .form({
-        inline: true,
-        fields: {
-          password: {
-            identifier: 'password',
-            rules: [
-              {
-                type: 'empty',
-                prompt: mf('error.passwordRequired')
-              },
-              {
-                type: 'length[7]',
-                prompt: mf('error.minChar7')
-              }
-            ]
-          },
-          passwordConfirm: {
-            identifier: 'password-again',
-            rules: [
-              {
-                type: 'match[password]',
-                prompt: mf('error.pwdsDontMatch')
-              }
-            ]
-          }
-        }
-      });
   }
 }

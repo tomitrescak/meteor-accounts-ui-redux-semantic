@@ -1,4 +1,5 @@
 import { trimInput, isEmail, isNotEmpty, isValidPassword, areValidPasswords } from '../configs/helpers';
+import i18n from 'es2015-i18n-tag';
 
 import { mutation } from 'apollo-mantra';
 
@@ -57,27 +58,27 @@ const actions = {
   logIn(data: any) {
     return { type: LOGIN, data };
   },
-  signIn(_: AccountsUI.Context, email: string, password: string, profileData: string, callback: Function) {
+  signIn(email: string, password: string, profileData: string, callback: Function) {
     return function(dispatch: Function) {
       signIn(dispatch, email, password, profileData, callback);
     };
   },
-  resendVerification(_: AccountsUI.Context, email: string, callback: Function) {
+  resendVerification(email: string, callback: Function) {
     return function(dispatch: Function) {
       resendVerification(dispatch, email, callback);
     };
   },
-  emailResetLink(_: AccountsUI.Context, email: string, callback: Function) {
+  emailResetLink(email: string, callback: Function) {
     return function(dispatch: Function) {
       emailResetLink(dispatch, email, callback);
     };
   },
-  resetPassword(_: AccountsUI.Context, passwordResetToken: string, password: string, passwordConfirm: string, profileData: string, callback: AccountsUI.AsyncCallback) {
+  resetPassword(passwordResetToken: string, password: string, passwordConfirm: string, profileData: string, callback: Function) {
     return function(dispatch: Function) {
       resetPassword(dispatch, passwordResetToken, password, passwordConfirm, profileData, callback);
     };
   },
-  register(_: AccountsUI.Context, name: string, email: string, password: string, passwordConfirm: string, profileData: string, callback: AccountsUI.AsyncCallback) {
+  register(name: string, email: string, password: string, passwordConfirm: string, profileData: string, callback: Function) {
     return function(dispatch: Function) {
       register(dispatch, name, email, password, passwordConfirm, profileData, callback);
     };
@@ -125,7 +126,7 @@ function resume(dispatch: Function, token: string, tokenExpiration: number, prof
     variables: {
       token
     },
-    catchCallback: (error) => {
+    catchCallback: (_error) => {
       dispatch(actions.changeLoggingIn(false));
       dispatch(actions.logOut());
     },
@@ -142,7 +143,7 @@ function signIn(dispatch: Function, email: string, password: string, profileData
   const ed = errorDispatch(dispatch);
   email = trimInput(email.toLowerCase());
 
-  if (!isNotEmpty(ed, email) || !isEmail(ed, email) || !isNotEmpty(ed, password) || !isValidPassword(ed, password)) {
+  if (!isNotEmpty(ed, email) || !isEmail(ed, email) || !isNotEmpty(ed, password) || !isValidPassword(dispatch, password)) {
     return;
   }
 
@@ -172,10 +173,10 @@ function signIn(dispatch: Function, email: string, password: string, profileData
         err = error.graphQLErrors[0];
       }
 
-      if (err.message === 'Email not verified') {
-        dispatch(actions.showError('accounts.error.emailNotVerified'));
+      if (err.message.match(/Email not verified/)) {
+        dispatch(actions.showError(i18n`Your email is not verified`));
       } else {
-        dispatch(actions.showError('accounts.error.invalidCredentials'));
+        dispatch(actions.showError(i18n`User of password is invalid`));
       }
 
       if (callback) { callback(); }
@@ -206,18 +207,19 @@ function resendVerification(dispatch: Function, email: string, callback: Functio
     variables: {
       email
     },
-    errorCallback: (err) => {
-      if (err.message === 'User not found') {
-        dispatch(actions.showError('accounts.error.emailNotFound'));
-      } if (err.message === 'User already verified') {
-        dispatch(actions.showError('accounts.error.userAlreadyVerified'));
+    catchCallback: (err) => {
+      if (err.message.match(/User not found/) || err.message.match(/User email does not exist/)) {
+        dispatch(actions.showError(i18n`User with this email does not exist`));
+      } else if (err.message.match(/User already verified/)) {
+        dispatch(actions.showError(i18n`This user is already verified`));
       } else {
-        dispatch(actions.showError('accounts.error.unknownError'));
+        console.error(err);
+        dispatch(actions.showError(i18n`Server error`));
       }
       if (callback) { callback(); }
     },
-    thenCallback: (data: any) => {
-      dispatch(actions.showInfo('accounts.messages.verificationEmailSent'));
+    thenCallback: (_data: any) => {
+      dispatch(actions.showInfo(i18n`We sent you instructions on how to verify your email`));
       if (callback) { callback(); }
     }
   }));
@@ -244,15 +246,16 @@ function emailResetLink(dispatch: Function, email: string, callback: Function) {
         err = error.graphQLErrors[0];
       }
 
-      if (err.message === 'User email does not exist') {
-        dispatch(actions.showError('accounts.error.emailNotFound'));
+      if (err.message.match(/User email does not exist/)) {
+        dispatch(actions.showError(i18n`User with this email does not exist!`));
       } else {
-        dispatch(actions.showError('accounts.error.unknownError'));
+        console.error(error);
+        dispatch(actions.showError(i18n`Server error`));
       }
       if (callback) { callback(); }
     },
-    thenCallback: (data: any) => {
-      dispatch(actions.showInfo('accounts.messages.passwordResetEmailSent'));
+    thenCallback: (_data: any) => {
+      dispatch(actions.showInfo(i18n`We sent you an email with password reset instructions`));
       if (callback) { callback(); }
     }
   }));
@@ -289,12 +292,12 @@ function resetPassword(dispatch: Function, token: string, password: string, pass
         err = error.graphQLErrors[0];
       }
 
-      if (err.message === 'jwt expired') {
-        ed('accounts.error.tokenExpired');
-      } else if (err.message === 'invalid token') {
-        ed('accounts.error.invalidToken');
-      } else if (err.message === 'jwt malformed') {
-        ed('accounts.error.invalidToken');
+      if (err.message.match(/jwt expired/)) {
+        ed(i18n`Session Expired`);
+      } else if (err.message.match(/invalid token/)) {
+        ed(i18n`Login prohibited with malformed token`);
+      } else if (err.message.match('jwt malformed')) {
+        ed(i18n`Login prohibited with malformed token`);
       } else {
         ed(err.message);
       }
@@ -341,12 +344,12 @@ function verify(dispatch: Function, token: string, profileData: string): void {
         err = error.graphQLErrors[0];
       }
 
-      if (err.message === 'jwt expired') {
-        ed('accounts.error.tokenExpired');
-      } else if (err.message === 'invalid token') {
-        ed('accounts.error.invalidToken');
-      } else if (err.message === 'jwt malformed') {
-        ed('accounts.error.invalidToken');
+      if (err.message.match(/jwt expired/)) {
+        ed(i18n`Session Expired`);
+      } else if (err.message.match(/invalid token/)) {
+        ed(i18n`Login prohibited with malformed token`);
+      } else if (err.message.match('jwt malformed')) {
+        ed(i18n`Login prohibited with malformed token`);
       } else {
         ed(err.message);
       }
@@ -376,6 +379,7 @@ function register(dispatch: Function, name: string, email: string, password: str
   };
 
   if (!isNotEmpty(ed, email) || !isNotEmpty(ed, password) || !isEmail(ed, email) || !areValidPasswords(ed, password, passwordConfirm)) {
+    callback();
     return;
   }
 
@@ -402,14 +406,16 @@ function register(dispatch: Function, name: string, email: string, password: str
       if (error.graphQLErrors) {
         err = error.graphQLErrors[0];
       }
-      if (err.message === 'User with this email already exists!') {
-        ed('accounts.error.emailAlreadyExists');
-      } else if (err.message === 'Email doesn\'t match the criteria.') {
-        ed('accounts.error.emailLimited');
-      } else if (err.message === 'Login forbidden') {
-        ed('accounts.error.loginForbidden');
+      if (err.message.match(/Email not verified!/)) {
+        dispatch(actions.showInfo(i18n`Account successfully created! We sent you an email with instructions on how to activate your account.`));
+      } else if (err.message.match(/User with this email already exists!/)) {
+        ed(i18n`User with this email already exists!`);
+      } else if (err.message.match(/Email doesn\'t match the criteria./)) {
+        ed(i18n`Email doesn\'t match the criteria`);
+      } else if (err.message.match(/Login forbidden/)) {
+        ed(i18n`Login forbidden`);
       } else {
-        ed('accounts.error.unknownError');
+        ed(i18n`Unknown error`);
       }
       if (callback) { callback(); }
     },

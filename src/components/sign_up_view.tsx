@@ -1,8 +1,6 @@
 import * as React from 'react';
-
-export interface IComponentProps {
-  context: AccountsUI.Context;
-}
+import i18n from 'es2015-i18n-tag';
+import { Form, Grid, Button, Divider } from 'semantic-ui-react';
 
 export interface IComponentActions {
   clearMessages: () => void;
@@ -10,127 +8,55 @@ export interface IComponentActions {
   showSignIn: () => void;
 }
 
-export interface IComponent extends IComponentProps, IComponentActions { }
+export interface IComponent extends IComponentActions { }
 
-export default class SignUp extends React.Component<IComponent, {}> {
-  register() {
-    if ($('#registerButton').hasClass('loading')) {
-      return;
-    }
-    $('#signUpForm').form('validate form');
-    if (!$('#signUpForm').form('is valid')) {
-      return;
-    }
+export interface IState {
+  loading: boolean;
+}
 
-    const name = this.refs['name']['value'];
-    const email = this.refs['email']['value'];
-    const pass1 = this.refs['password']['value'];
-    const pass2 = this.refs['password-again']['value'];
+export default class SignUp extends React.Component<IComponent, IState> {
+  constructor() {
+    super();
+    this.state = { loading: false };
+  }
 
-    $('#registerButton').addClass('loading');
+  register(e: any, serialisedForm: any) {
+    e.preventDefault();
+
+    this.setState({ loading: true });
+
+    const name = serialisedForm.name;
+    const email = serialisedForm.email;
+    const pass1 = serialisedForm.password1;
+    const pass2 = serialisedForm.password2;
+
     this.props.register(name, email, pass1, pass2, () => {
-      $('#registerButton').removeClass('loading');
+      this.setState({ loading: false });
     });
   }
 
   render() {
-    const mf = this.props.context.i18n.initTranslator('accounts');
-
     return (
-      <div className="ui form login" id="signUpForm">
-        <div className="ui error message" />
-        <div className="field">
-          <label>{ mf('fullName') }</label>
-          <div className="ui icon input">
-            <input type="text" placeholder={ mf('nameAndSurename') } id="name" ref="name" />
-            <i className="user icon" />
-          </div>
-        </div>
-        <div className="field">
-          <label>{ mf('email') }</label>
-          <div className="ui icon input">
-            <input type="text" placeholder={ mf('emailAddress') } id="email" ref="email" />
-            <i className="mail icon" />
-          </div>
-        </div>
-        <div className="field">
-          <label>{ mf('password') }</label>
-          <div className="ui icon input">
-            <input type="password" placeholder={ mf('password') } id="password" ref="password" />
-            <i className="lock icon" />
-          </div>
-        </div>
-        <div className="field">
-          <label>{ mf('passwordAgain') }</label>
-          <div className="ui icon input">
-            <input type="password" placeholder={ mf('passwordAgain') } id="password-again" ref="password-again" />
-            <i className="lock icon" />
-          </div>
-        </div>
+      <Form onSubmit={this.register.bind(this)} method="post">
+        <Form.Input label={i18n`Name and Surename`} placeholder={i18n`Your full name`} name="name" icon="user" />
+        <Form.Input icon="mail" label={i18n`Email`} placeholder={i18n`Email Address`} name="email" />
+        <Form.Input type="password" label={i18n`Password`} placeholder={i18n`Password`} name="password1" />
+        <Form.Input type="password" label={i18n`Password again`} placeholder={i18n`Password`} name="password2" />
 
-        <div className="ui equal width center aligned grid">
-          <div className="first column">
-            <div className="ui primary button" id="registerButton" onClick={this.register.bind(this) }>{ mf('signUp') }</div>
-          </div>
-          <div className="ui horizontal divider">
-            Or
-          </div>
-          <div className="last column">
-            <div className="green ui labeled icon button" id="signInButton" onClick={this.props.showSignIn}>
-              <i className="sign in icon" />
-              { mf('signIn') }
-            </div>
-          </div>
-        </div>
-      </div>
+        <Grid centered className="equal width">
+          <Grid.Row>
+            <Grid.Column textAlign="center">
+              <Button type="submit" loading={this.state.loading} primary content={i18n`Register`} />
+            </Grid.Column>
+          </Grid.Row>
+          <Divider horizontal>{i18n`Or`}</Divider>
+          <Grid.Row>
+            <Grid.Column textAlign="center">
+              <Button type="button" onClick={this.props.showSignIn} color="green" labelPosition="left" content={i18n`Sign In`} icon="signup" />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Form>
     );
-  }
-
-  componentDidMount() {
-    this.props.clearMessages();
-    const mf = this.props.context.i18n.initTranslator('accounts');
-
-    let rules = {
-      name: {
-        identifier: 'name',
-        rules: [{
-          type: 'regExp[\\w \\w]',
-          prompt: mf('error.nameIncorrect')
-        }]
-      },
-      username: {
-        identifier: 'email',
-        rules: [{
-          type: 'empty',
-          prompt: mf('error.emailRequired')
-        }, {
-            type: 'email',
-            prompt: mf('error.emailRequired')
-          }]
-      },
-      password: {
-        identifier: 'password',
-        rules: [{
-          type: 'empty',
-          prompt: mf('error.passwordRequired')
-        }, {
-            type: 'length[7]',
-            prompt: mf('error.minChar7')
-          }]
-      },
-      passwordConfirm: {
-        identifier: 'password-again',
-        rules: [{
-          type: 'match[password]',
-          prompt: mf('error.pwdsDontMatch')
-        }]
-      }
-    };
-
-    $('#signUpForm')
-      .form({
-        inline: true,
-        fields: rules
-      });
   }
 }

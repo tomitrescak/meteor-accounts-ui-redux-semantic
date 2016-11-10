@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { Dropdown, Icon } from 'semantic-ui-react';
+import i18n from 'es2015-i18n-tag';
+import { DropdownMenu } from 'semantic-ui-react-router';
 
 export interface IComponentProps {
-  context: AccountsUI.Context;
   userName: string;
   userId: string;
 }
@@ -12,35 +14,28 @@ export interface IComponentActions {
 
 export interface IComponent extends IComponentProps, IComponentActions { }
 
-function waitInit() {
-  $('#userMenu').dropdown({ on: 'hover' });
-}
+export const UserView = ({ userId, userName, signOut }: IComponent ) => {
+  if (!userId) {
+    return <span></span>;
+  };
 
-export default class UserView extends React.Component<IComponent, {}> {
-  render() {
-    const mf = this.props.context.i18n.initTranslator('accounts');
+  return (
+    <DropdownMenu as={Dropdown} className="dropdown" text={userName}>
+      <Dropdown.Menu>
+        <Dropdown.Item text={i18n`Sign Out`} icon="sign out" onClick={signOut} />
+      </Dropdown.Menu>
+    </DropdownMenu>
+  );
+};
 
-    if (!this.props.userId) {
-      return <span></span>;
-    };
+UserView.displayName = 'UserView';
+export default UserView;
 
-    return (
-      <div className="ui dropdown item" id="userMenu">
-        <i className="user icon" />
-        { this.props.userName }
-        <i className="caret down icon" />
-        <div className="menu">
-          <a className="item" id="signOut" onClick={this.props.signOut}><i className="sign out icon" />{ mf('signOut') }</a>
-        </div>
-      </div>
-    );
-  }
-
-  componentDidMount() {
-    waitInit();
-  }
-
-  componentDidUpdate() {
-    waitInit();
-  }
-}
+  // <div className="ui dropdown item" id="userMenu">
+  //       <i className="user icon" />
+  //       { this.props.userName }
+  //       <i className="caret down icon" />
+  //       <div className="menu">
+  //         <a className="item" id="signOut" onClick={this.props.signOut}><i className="sign out icon" />{ mf('signOut') }</a>
+  //       </div>
+  //     </div>

@@ -11,7 +11,6 @@ export interface IComponentProps {
   infos: string;
   viewType: string;
   token?: string;
-  context: AccountsUI.Context;
 }
 
 export interface IComponentActions {
@@ -26,7 +25,6 @@ export interface IComponentActions {
   showRegister: () => void;
   signIn: (userName: string, password: string) => void;
   register: (name: string, email: string, pass1: string, pass2: string) => void;
-  context: AccountsUI.Context;
 }
 
 export interface IComponent extends IComponentProps, IComponentActions {}
@@ -34,11 +32,7 @@ export interface IComponent extends IComponentProps, IComponentActions {}
 export default class AccountsRoot extends React.Component<IComponent, {}> {
   static displayName = 'AccountsView';
 
-  context: AccountsUI.Context;
-
   render() {
-    this.context = this.props.context;
-
     // const { error } = this.props;
     return (
       <div>

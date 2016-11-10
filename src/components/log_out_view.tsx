@@ -1,22 +1,16 @@
 import * as React from 'react';
-
-export interface IComponentProps {
-  context: AccountsUI.Context;
-}
+import i18n from 'es2015-i18n-tag';
+import { Button } from 'semantic-ui-react';
 
 export interface IComponentActions {
   signOut: () => void;
-  context: AccountsUI.Context;
 }
 
-interface IComponent extends IComponentProps, IComponentActions { }
+interface IComponent extends IComponentActions { }
 
-const View = ({signOut, context}: IComponentActions) => {
-  const mf = context.i18n.initTranslator('accounts');
+const View = ({signOut }: IComponentActions) => {
   return (
-    <div className="ui primary button" onClick={signOut}>
-      { mf('signOut') }
-    </div>
+    <Button primary content={i18n`Sign Out`} onClick={signOut} />
   );
 };
 
