@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dropdown, Icon } from 'semantic-ui-react';
 import i18n from 'es2015-i18n-tag';
-import { DropdownMenu } from 'semantic-ui-react-router';
+import { ReactRouter } from 'semantic-ui-react-router';
 
 export interface IComponentProps {
   userName: string;
@@ -20,11 +20,11 @@ export const UserView = ({ userId, userName, signOut }: IComponent ) => {
   };
 
   return (
-    <DropdownMenu as={Dropdown} className="dropdown" text={userName}>
+    <ReactRouter.DropdownMenu as={Dropdown} className="dropdown" trigger={<span><Icon name="user" />{userName}</span>}>
       <Dropdown.Menu>
         <Dropdown.Item text={i18n`Sign Out`} icon="sign out" onClick={signOut} />
       </Dropdown.Menu>
-    </DropdownMenu>
+    </ReactRouter.DropdownMenu>
   );
 };
 

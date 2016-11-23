@@ -110,7 +110,7 @@ function resume(dispatch: Function, token: string, tokenExpiration: number, prof
   dispatch(actions.changeLoggingIn(true));
 
   dispatch(mutation({
-    query: `mutation resume($token: String!) {
+    query: gql`mutation resume($token: String!) {
       resume(token: $token) {
         hashedToken
         expires
@@ -148,7 +148,7 @@ function signIn(dispatch: Function, email: string, password: string, profileData
   }
 
   dispatch(mutation({
-    query: `mutation loginWithPassword($user: UserPasswordInput!) {
+    query: gql`mutation loginWithPassword($user: UserPasswordInput!) {
       loginWithPassword(user: $user) {
         hashedToken
         expires
@@ -201,7 +201,7 @@ function resendVerification(dispatch: Function, email: string, callback: Functio
   }
 
   dispatch(mutation({
-    query: `mutation requestResendVerification($email: String!) {
+    query: gql`mutation requestResendVerification($email: String!) {
       requestResendVerification(email: $email)
     }`,
     variables: {
@@ -234,7 +234,7 @@ function emailResetLink(dispatch: Function, email: string, callback: Function) {
   }
 
   dispatch(mutation({
-    query: `mutation requestResetPassword($email: String!) {
+    query: gql`mutation requestResetPassword($email: String!) {
       requestResetPassword(email: $email)
     }`,
     variables: {
@@ -269,7 +269,7 @@ function resetPassword(dispatch: Function, token: string, password: string, pass
   }
 
   dispatch(mutation({
-    query: `mutation resetPassword($token: String!, $password: String!) {
+    query: gql`mutation resetPassword($token: String!, $password: String!) {
       resetPassword(token: $token, password: $password) {
         hashedToken
         expires
@@ -322,7 +322,7 @@ function verify(dispatch: Function, token: string, profileData: string): void {
   const ed = errorDispatch(dispatch);
 
   dispatch(mutation({
-    query: `mutation verify($token: String!) {
+    query: gql`mutation verify($token: String!) {
       verify(token: $token) {
         hashedToken
         expires
@@ -384,7 +384,7 @@ function register(dispatch: Function, name: string, email: string, password: str
   }
 
   dispatch(mutation({
-    query: `mutation createAccountAndLogin($user: UserPasswordInput!) {
+    query: gql`mutation createAccountAndLogin($user: UserPasswordInput!) {
       createAccountAndLogin(user: $user) {
         hashedToken
         expires
