@@ -23,4 +23,7 @@ export default class User {
   isAdmin() {
     return this.roles && this.roles.indexOf('admin') >= 0;
   }
+
+  login(_data: any) { /**/ }
+  logout() { /**/ }
 }

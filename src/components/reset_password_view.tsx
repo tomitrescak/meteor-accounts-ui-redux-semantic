@@ -2,14 +2,12 @@ import * as React from 'react';
 import i18n from 'es2015-i18n-tag';
 import { Form, Grid, Button, Divider } from 'semantic-ui-react';
 
-export interface IComponentActions {
-  clearMessages: () => void;
-  resetPassword: (token: string, pass1: string, pass2: string, callback: Function) => void;
-  showSignIn: () => void;
+import * as actions from '../actions/accounts';
+import getState from '../configs/state';
+
+export interface IComponent {
   token: string;
 }
-
-export interface IComponent extends IComponentActions { }
 
 export interface IState {
   loading: boolean;
@@ -22,16 +20,17 @@ export default class ResetPassword extends React.Component<IComponent, IState> {
   }
 
   resetPassword(e: any, serialisedForm: any) {
+    const state = getState();
     e.preventDefault();
     this.setState({ loading: true });
 
-    this.props.resetPassword(this.props.token, serialisedForm.password1, serialisedForm.password2, () => {
+    actions.resetPassword(this.props.token, serialisedForm.formData.password1, serialisedForm.formData.password2, state.profileData, () => {
       this.setState({ loading: false });
     });
   }
 
   render() {
-
+    const state = getState();
     return (
       <Form onSubmit={this.resetPassword.bind(this)} method="post">
         <Form.Input type="password" label={i18n`Password`} placeholder={i18n`Password`} name="password1" />
@@ -46,7 +45,7 @@ export default class ResetPassword extends React.Component<IComponent, IState> {
           <Divider horizontal>{i18n`Or`}</Divider>
           <Grid.Row>
             <Grid.Column textAlign="center">
-              <Button type="button" onClick={this.props.showSignIn} color="red" labelPosition="left" content={i18n`Sign In`} icon="signup" />
+              <Button type="button" onClick={state.showSignIn} color="red" labelPosition="left" content={i18n`Sign In`} icon="signup" />
             </Grid.Column>
           </Grid.Row>
         </Grid>

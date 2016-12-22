@@ -1,32 +1,38 @@
 import * as React from 'react';
-import { Dropdown, Icon } from 'semantic-ui-react';
+import { Dropdown, Icon, Menu } from 'semantic-ui-react';
 import i18n from 'es2015-i18n-tag';
-import { ReactRouter } from 'semantic-ui-react-router';
+import getState from '../configs/state';
+
+import { observer } from 'mobx-react';
 
 export interface IComponentProps {
+  showUserName: boolean;
   userName: string;
   userId: string;
+  extraItems: any[];
 }
 
-export interface IComponentActions {
-  signOut: () => void;
-}
 
-export interface IComponent extends IComponentProps, IComponentActions { }
+export interface IComponent extends IComponentProps { }
 
-export const UserView = ({ userId, userName, signOut }: IComponent ) => {
-  if (!userId) {
+export const UserView = observer(({ showUserName, extraItems }: IComponent ) => {
+  const state = getState();
+  if (!state.userId) {
     return <span></span>;
   };
+  extraItems = extraItems ? extraItems.slice(0) : [];
+  extraItems.unshift(<Dropdown.Item key="sign_out" text={i18n`Sign Out`} icon="sign out" onClick={state.logOut} />);
 
+  const UserNameView = <span><Icon name="user" />{showUserName ? state.user.profile.name : ''}</span>;
+  const extras = {trigger : UserNameView};
   return (
-    <ReactRouter.DropdownMenu as={Dropdown} className="dropdown" trigger={<span><Icon name="user" />{userName}</span>}>
+    <Menu.Item as={Dropdown} className="dropdown" {...extras}>
       <Dropdown.Menu>
-        <Dropdown.Item text={i18n`Sign Out`} icon="sign out" onClick={signOut} />
+        { extraItems }
       </Dropdown.Menu>
-    </ReactRouter.DropdownMenu>
+    </Menu.Item>
   );
-};
+});
 
 UserView.displayName = 'UserView';
 export default UserView;

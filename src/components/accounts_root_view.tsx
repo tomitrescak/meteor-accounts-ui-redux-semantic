@@ -6,44 +6,28 @@ import ResetPassword from './reset_password_view';
 import Register from './sign_up_view';
 import LogOutView from './log_out_view';
 
-export interface IComponentProps {
-  alerts: string;
-  infos: string;
-  viewType: string;
-  token?: string;
-}
+import getState from '../configs/state';
+import { observer } from 'mobx-react';
 
-export interface IComponentActions {
-  clearMessages: () => void;
-  emailResetLink: (email: string) => void;
-  showSignIn: () => void;
-  signOut: () => void;
-  emailVerification: (email: string) => void;
-  resetPassword: (pass1: string, pass2: string) => void;
-  showForgotPassword: () => void;
-  showResendVerification: () => void;
-  showRegister: () => void;
-  signIn: (userName: string, password: string) => void;
-  register: (name: string, email: string, pass1: string, pass2: string) => void;
-}
+export interface IComponent {}
 
-export interface IComponent extends IComponentProps, IComponentActions {}
-
+@observer
 export default class AccountsRoot extends React.Component<IComponent, {}> {
   static displayName = 'AccountsView';
 
   render() {
+    const state = getState();
     // const { error } = this.props;
     return (
       <div>
-        { this.props.alerts ? <div className="ui red message">{ this.props.alerts }</div> : '' }
-        { this.props.infos ? <div className="ui green message">{ this.props.infos }</div> : '' }
-        { this.props.viewType === 'forgotPassword' ? <ForgotPassword {...this.props} /> : '' }
-        { this.props.viewType === 'resendVerification' ? <ResendVerification {...this.props} /> : '' }
-        { this.props.viewType === 'resetPassword' ? <ResetPassword  {...this.props} /> : '' }
-        { this.props.viewType === 'signIn' ? <SignIn {...this.props} /> : '' }
-        { this.props.viewType === 'register' ? <Register {...this.props} /> : '' }
-        { this.props.viewType === 'loggedIn' ? <LogOutView {...this.props} /> : '' }
+        { state.error && <div className="ui red message">{ state.error }</div>  }
+        { state.info && <div className="ui green message">{ state.info }</div>  }
+        { state.view === 'forgotPassword' && <ForgotPassword {...this.props} />  }
+        { state.view === 'resendVerification' && <ResendVerification {...this.props} /> }
+        { state.view === 'resetPassword' && <ResetPassword token={state.token} {...this.props} />  }
+        { state.view === 'signIn' && <SignIn {...this.props} />  }
+        { state.view === 'register' && <Register {...this.props} />  }
+        { state.view === 'loggedIn' && <LogOutView {...this.props} />  }
       </div>
     );
   }

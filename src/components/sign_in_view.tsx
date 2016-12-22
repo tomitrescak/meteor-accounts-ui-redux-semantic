@@ -1,6 +1,12 @@
 import * as React from 'react';
 import i18n from 'es2015-i18n-tag';
 import { Form, Grid, Button, Divider } from 'semantic-ui-react';
+
+import * as actions from '../actions/accounts';
+import getState from '../configs/state';
+
+import { observer } from 'mobx-react';
+
 // import { style } from 'typestyle';
 
 // const css = style({
@@ -17,59 +23,47 @@ import { Form, Grid, Button, Divider } from 'semantic-ui-react';
 
 const pointer = { cursor: 'pointer '};
 
-export interface IComponentActions {
-  clearMessages: () => void;
-  showForgotPassword: () => void;
-  showResendVerification: () => void;
-  showRegister: () => void;
-  signIn: (userName: string, password: string, callback: Function) => void;
-}
 
-export interface IComponent extends IComponentActions { }
+export interface IComponent { }
 
-export interface IState {
-  loading: boolean;
-}
-
-export default class SignIn extends React.Component<IComponent, IState> {
+@observer
+export default class SignIn extends React.Component<IComponent, {}> {
   constructor() {
     super();
-    this.state = { loading: false };
   }
 
-  signIn(e: any, serialisedForm: any) {
+  signIn = (e: any, serialisedForm: any) => {
+    const state = getState();
     e.preventDefault();
 
-    this.setState({ loading: true });
-    const email = serialisedForm.email;
-    const password = serialisedForm.password;
+    const email = serialisedForm.formData.email;
+    const password = serialisedForm.formData.password;
 
-    this.props.signIn(email, password, () => {
-      this.state = { loading: false };
-    });
+    actions.signIn(email, password, state.profileData);
   }
 
   render() {
+    const state = getState();
     return (
-      <Form onSubmit={this.signIn.bind(this)} method="post">
+      <Form onSubmit={this.signIn} method="post">
         <Form.Input icon="mail" label={i18n`Email`} placeholder={i18n`Email Address`} name="email" />
         <Form.Input icon="lock" name="password" type="password" label={i18n`Password`} />
         <Grid centered className="equal width">
           <Grid.Row>
             <Grid.Column textAlign="left">
-              <a onClick={this.props.showForgotPassword} style={pointer}>{i18n`Forgot Password?`}</a>
+              <a onClick={state.showForgotPassword} style={pointer}>{i18n`Forgot Password?`}</a>
             </Grid.Column>
             <Grid.Column textAlign="center">
-              <Button loading={this.state.loading} type="submit" primary content={i18n`Sign In`} icon="sign in" />
+              <Button loading={state.mutating} type="submit" primary content={i18n`Sign In`} icon="sign in" />
             </Grid.Column>
             <Grid.Column textAlign="right">
-              <a onClick={this.props.showResendVerification} style={pointer}>{i18n`Re-send verification`}</a>
+              <a onClick={state.showResendVerification} style={pointer}>{i18n`Re-send verification`}</a>
             </Grid.Column>
           </Grid.Row>
           <Divider horizontal>{i18n`Or`}</Divider>
           <Grid.Row>
             <Grid.Column textAlign="center">
-              <Button type="button" onClick={this.props.showRegister} color="green" labelPosition="left" content={i18n`Register`} icon="signup" />
+              <Button type="button" onClick={state.showRegister} color="green" labelPosition="left" content={i18n`Register`} icon="sign in" />
             </Grid.Column>
           </Grid.Row>
         </Grid>

@@ -2,13 +2,10 @@ import * as React from 'react';
 import i18n from 'es2015-i18n-tag';
 import { Form, Grid, Button, Divider } from 'semantic-ui-react';
 
-export interface IComponentActions {
-  clearMessages: () => void;
-  emailResetLink: (email: string, callback: Function) => void;
-  showSignIn: () => void;
-}
+import * as actions from '../actions/accounts';
+import getState from '../configs/state';
 
-export interface IComponent extends IComponentActions { }
+export interface IComponent { }
 
 export interface IState {
   loading: boolean;
@@ -23,13 +20,13 @@ export default class ForgotPassword extends React.Component<IComponent, IState> 
   emailResetLink(e: any, serialisedForm: any) {
     e.preventDefault();
     this.setState({ loading: true });
-    this.props.emailResetLink(serialisedForm.email, () => {
+    actions.emailResetLink(serialisedForm.formData.email, () => {
       this.setState({ loading: false });
     });
   }
 
   render() {
-
+    const state = getState();
     return (
       <Form onSubmit={this.emailResetLink.bind(this)}>
         <Form.Input icon="mail" label={i18n`Email`} placeholder={i18n`Email Address`} name="email" />
@@ -42,7 +39,7 @@ export default class ForgotPassword extends React.Component<IComponent, IState> 
           <Divider horizontal>{i18n`Or`}</Divider>
           <Grid.Row>
             <Grid.Column textAlign="center">
-              <Button type="button" onClick={this.props.showSignIn} color="green" labelPosition="left" content={i18n`Sign In`} icon="signup" />
+              <Button type="button" onClick={state.showSignIn} color="green" labelPosition="left" content={i18n`Sign In`} icon="sign in" />
             </Grid.Column>
           </Grid.Row>
         </Grid>
