@@ -1,0 +1,1 @@
+module 'es2015-i18n-tag';

@@ -42,6 +42,7 @@ export function initState<T extends User>(state?: any): AccountState<T> {
   let defaultView = 'signIn';
   const initialToken = getParameterByName('resetPassword');
   if (initialToken) {
+    state.token = initialToken;
     defaultView = 'resetPassword';
   }
   const verifyToken = getParameterByName('verifyEmail');

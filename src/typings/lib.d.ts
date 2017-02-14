@@ -7,3 +7,4 @@ interface Function {
 }
 
 declare var gql: any;
+declare var process: any;

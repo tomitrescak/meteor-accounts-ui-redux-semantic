@@ -10,6 +10,7 @@ export function resume(token: string, tokenExpiration: number, profileData: stri
     return;
   }
 
+  state.mutating = true;
   state.changeLoggingIn(true);
 
   mutate({
@@ -30,14 +31,15 @@ export function resume(token: string, tokenExpiration: number, profileData: stri
       token
     },
     catchCallback: (_error) => {
-      state.changeLoggingIn(false);
-      if (window['process'] == null || window['process'].env == null || window['process'].env.NODE_ENV !== 'DEBUG') {
+      if (process.env.NODE_ENV === 'production') {
         state.logOut();
       }
     },
     thenCallback: (data: any) => {
-      state.changeLoggingIn(false);
       state.logIn(data.resume);
+    },
+    finalCallback() {
+      state.mutating = false;
     }
   });
 }
@@ -81,7 +83,7 @@ export function signIn(email: string, password: string, profileData: string): an
       if (error.message.match(/Email not verified/)) {
         state.showError(i18n`Your email is not verified`);
       } else {
-        state.showError(i18n`User of password is invalid`);
+        state.showError(i18n`User or password is invalid`);
       }
     },
     thenCallback: (data: any) => {
@@ -93,13 +95,14 @@ export function signIn(email: string, password: string, profileData: string): an
   });
 }
 
-export function resendVerification(email: string, callback: Function) {
+export function resendVerification(email: string, callback?: Function) {
   const state = getState();
   if (!isNotEmpty(state, email) || !isEmail(state, email)) {
     if (callback) { callback(); }
     return;
   }
 
+  state.mutating = true;
   mutate({
     query: gql`mutation requestResendVerification($email: String!) {
       requestResendVerification(email: $email)
@@ -121,17 +124,21 @@ export function resendVerification(email: string, callback: Function) {
     thenCallback: (_data: any) => {
       state.showInfo(i18n`We sent you instructions on how to verify your email`);
       if (callback) { callback(); }
+    },
+    finalCallback() {
+      state.mutating = false;
     }
   });
 }
 
-export function emailResetLink(email: string, callback: Function) {
+export function emailResetLink(email: string, callback?: Function) {
   const state = getState();
   if (!isNotEmpty(state, email) || !isEmail(state, email)) {
     if (callback) { callback(); }
     return;
   }
 
+  state.mutating = true;
   mutate({
     query: gql`mutation requestResetPassword($email: String!) {
       requestResetPassword(email: $email)
@@ -155,16 +162,20 @@ export function emailResetLink(email: string, callback: Function) {
     thenCallback: (_data: any) => {
       state.showInfo(i18n`We sent you an email with password reset instructions`);
       if (callback) { callback(); }
+    },
+    finalCallback() {
+      state.mutating = false;
     }
   });
 }
 
-export function resetPassword(token: string, password: string, passwordConfirm: string, profileData: string, callback: Function): void {
+export function resetPassword(token: string, password: string, passwordConfirm: string, profileData: string, callback?: Function): void {
   const state = getState();
   if (!isNotEmpty(state, password) || !areValidPasswords(state, password, passwordConfirm)) {
     return;
   }
 
+  state.mutating = true;
   mutate({
     query: gql`mutation resetPassword($token: String!, $password: String!) {
       resetPassword(token: $token, password: $password) {
@@ -197,7 +208,6 @@ export function resetPassword(token: string, password: string, passwordConfirm: 
       } else {
         state.showError(error.message);
       }
-      if (callback) { callback(); }
     },
     thenCallback: (data: any) => {
       // state.showInfo('accounts.messages.passwordChanged'));
@@ -209,6 +219,9 @@ export function resetPassword(token: string, password: string, passwordConfirm: 
         state.logIn(data.resetPassword);
         window.location.href = url;
       }
+    },
+    finalCallback() {
+      state.mutating = false;
       if (callback) { callback(); }
     }
   });
@@ -216,6 +229,7 @@ export function resetPassword(token: string, password: string, passwordConfirm: 
 
 export function verify(token: string, profileData: string): void {
   const state = getState();
+  state.mutating = true;
   mutate({
     query: gql`mutation verify($token: String!) {
       verify(token: $token) {
@@ -257,11 +271,14 @@ export function verify(token: string, profileData: string): void {
       } else {
         window.location.href = url;
       }
+    },
+    finalCallback() {
+      state.mutating = false;
     }
   });
 }
 
-export function register(name: string, email: string, password: string, passwordConfirm: string, profileData: string, callback: any) {
+export function register(name: string, email: string, password: string, passwordConfirm: string, profileData: string, callback?: any) {
   const state = getState();
   let user = {
     email: email,
@@ -276,6 +293,7 @@ export function register(name: string, email: string, password: string, password
     return;
   }
 
+  state.mutating = true;
   mutate({
     query: gql`mutation createAccountAndLogin($user: UserPasswordInput!) {
       createAccountAndLogin(user: $user) {
@@ -301,19 +319,22 @@ export function register(name: string, email: string, password: string, password
       if (error.message.match(/Email not verified!/)) {
         state.showInfo(i18n`Account successfully created! We sent you an email with instructions on how to activate your account.`);
       } else if (error.message.match(/User with this email already exists!/)) {
-        state.showInfo(i18n`User with this email already exists!`);
+        state.showError(i18n`User with this email already exists!`);
       } else if (error.message.match(/Email doesn\'t match the criteria./)) {
-        state.showInfo(i18n`Email doesn\'t match the criteria`);
+        state.showError(i18n`Email doesn\'t match the criteria`);
       } else if (error.message.match(/Login forbidden/)) {
-        state.showInfo(i18n`Login forbidden`);
+        state.showError(i18n`Login forbidden`);
       } else {
-        state.showInfo(i18n`Unknown error`);
+        state.showError(i18n`Unknown error`);
       }
       if (callback) { callback(); }
     },
     thenCallback: (data: any) => {
       state.logIn(data.createAccountAndLogin);
       if (callback) { callback(); }
+    },
+    finalCallback() {
+      state.mutating = false;
     }
   });
 }

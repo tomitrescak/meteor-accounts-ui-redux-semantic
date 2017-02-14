@@ -23,7 +23,6 @@ import { observer } from 'mobx-react';
 
 const pointer = { cursor: 'pointer '};
 
-
 export interface IComponent { }
 
 @observer
@@ -60,7 +59,7 @@ export default class SignIn extends React.Component<IComponent, {}> {
               <a onClick={state.showResendVerification} style={pointer}>{i18n`Re-send verification`}</a>
             </Grid.Column>
           </Grid.Row>
-          <Divider horizontal>{i18n`Or`}</Divider>
+          <Divider horizontal inverted>{i18n`Or`}</Divider>
           <Grid.Row>
             <Grid.Column textAlign="center">
               <Button type="button" onClick={state.showRegister} color="green" labelPosition="left" content={i18n`Register`} icon="sign in" />

@@ -79,6 +79,7 @@ export class AccountState<T extends User> {
       localStorage.removeItem('jwtToken');
       localStorage.removeItem('jwtTokenExpiration');
     }
+    this.loggingIn = false;
     this.user.logout();
     this.view = 'signIn';
     this.error = '';
@@ -95,7 +96,7 @@ export class AccountState<T extends User> {
     this.user = this.createUser(data.user);
     this.userId = data.user._id;
     this.view = 'loggedIn';
-
+    this.loggingIn = false;
     this.user.login(data);
   }
 
