@@ -5,7 +5,7 @@ export function trimInput(value: string) {
   return value.replace(/^\s*|\s*$/g, '');
 };
 
-export function isNotEmpty(state: App.Accounts.State<User>, value: string) {
+export function isNotEmpty(state: App.Accounts.State, value: string) {
   if (value && value !== '') {
     return true;
   }
@@ -13,7 +13,7 @@ export function isNotEmpty(state: App.Accounts.State<User>, value: string) {
   return false;
 };
 
-export function isEmail(state: App.Accounts.State<User>, value: string) {
+export function isEmail(state: App.Accounts.State, value: string) {
   let filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   if (filter.test(value)) {
     return true;
@@ -22,7 +22,7 @@ export function isEmail(state: App.Accounts.State<User>, value: string) {
   return false;
 };
 
-export function isValidPassword(state: App.Accounts.State<User>, password: string) {
+export function isValidPassword(state: App.Accounts.State, password: string) {
   if (password.length < 7) {
     state.error = i18n`Password needs to have at least 7 characters`;
     return false;
@@ -30,7 +30,7 @@ export function isValidPassword(state: App.Accounts.State<User>, password: strin
   return true;
 };
 
-export function areValidPasswords(state: App.Accounts.State<User>, password: string, confirm: string) {
+export function areValidPasswords(state: App.Accounts.State, password: string, confirm: string) {
   if (!isValidPassword(state, password)) {
     return false;
   }

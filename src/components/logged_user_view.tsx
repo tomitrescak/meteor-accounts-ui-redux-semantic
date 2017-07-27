@@ -1,38 +1,38 @@
 import * as React from 'react';
 import { Dropdown, Icon, Menu } from 'semantic-ui-react';
 import i18n from 'es2015-i18n-tag';
-import getState from '../configs/state';
 
 import { observer } from 'mobx-react';
+import { getAccountState } from '../configs/state';
+import { ISimpleComponent } from './shared';
 
-export interface IComponentProps {
-  showUserName: boolean;
-  userName: string;
-  userId: string;
-  extraItems: any[];
+export interface IComponent extends ISimpleComponent {
+  showUserName?: boolean;
+  extraItems?: any[];
 }
 
 
-export interface IComponent extends IComponentProps { }
+@observer
+export class UserView extends React.PureComponent<IComponent, {}> {
+  render() {
+    const currentState = this.props.state || getAccountState();
+    if (!currentState.userId) {
+      return <span></span>;
+    };
+    let extraItems = this.props.extraItems ? this.props.extraItems.slice(0) : [];
+    extraItems.unshift(<Dropdown.Item key="sign_out" text={i18n`Sign Out`} icon="sign out" onClick={currentState.logOut} />);
 
-export const UserView = observer(({ showUserName, extraItems }: IComponent ) => {
-  const state = getState();
-  if (!state.userId) {
-    return <span></span>;
-  };
-  extraItems = extraItems ? extraItems.slice(0) : [];
-  extraItems.unshift(<Dropdown.Item key="sign_out" text={i18n`Sign Out`} icon="sign out" onClick={state.logOut} />);
-
-  const UserNameView = <span><Icon name="user" />{showUserName ? state.user.profile.name : ''}</span>;
-  const extras = {trigger : UserNameView};
-  return (
-    <Menu.Item as={Dropdown} className="dropdown" {...extras}>
-      <Dropdown.Menu>
-        { extraItems }
-      </Dropdown.Menu>
-    </Menu.Item>
-  );
-});
+    const UserNameView = <span><Icon name="user" />{this.props.showUserName ? currentState.user.profile.name : ''}</span>;
+    const extras: any = { trigger: UserNameView };
+    return (
+      <Menu.Item as={Dropdown} className="dropdown" {...extras}>
+        <Dropdown.Menu>
+          {extraItems}
+        </Dropdown.Menu>
+      </Menu.Item>
+    );
+  }
+};
 
 UserView.displayName = 'UserView';
 export default UserView;

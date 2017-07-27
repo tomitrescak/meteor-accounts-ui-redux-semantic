@@ -2,10 +2,9 @@ import * as React from 'react';
 import i18n from 'es2015-i18n-tag';
 import { Form, Grid, Button, Divider } from 'semantic-ui-react';
 
-import * as actions from '../actions/accounts';
-import getState from '../configs/state';
-
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
+import { ISimpleComponent } from './shared';
 
 // import { style } from 'typestyle';
 
@@ -23,30 +22,35 @@ import { observer } from 'mobx-react';
 
 const pointer = { cursor: 'pointer '};
 
-export interface IComponent { }
-
 @observer
-export default class SignIn extends React.Component<IComponent, {}> {
+export default class SignIn extends React.Component<ISimpleComponent, {}> {
+  @observable email = '';
+  @observable password = '';
+
   constructor() {
     super();
   }
 
-  signIn = (e: any, serialisedForm: any) => {
-    const state = getState();
+  signIn = (e: any) => {
+    const currentState = this.props.state;
     e.preventDefault();
 
-    const email = serialisedForm.formData.email;
-    const password = serialisedForm.formData.password;
+    const email = this.email;
+    const password = this.password;
 
-    actions.signIn(email, password, state.profileData);
+    this.props.state.signIn(currentState, email, password, currentState.profileData);
+  }
+
+  handleChange = (_e: React.SyntheticEvent<HTMLInputElement>, { name, value }: NameValuePair) => {
+    this[name] = value;
   }
 
   render() {
-    const state = getState();
+    const state = this.props.state;
     return (
-      <Form onSubmit={this.signIn} method="post">
-        <Form.Input icon="mail" label={i18n`Email`} placeholder={i18n`Email Address`} name="email" />
-        <Form.Input icon="lock" name="password" type="password" label={i18n`Password`} />
+      <Form onSubmit={this.signIn} method="post" className={this.props.inverted ? 'inverted' : ''}>
+        <Form.Input icon="mail" label={i18n`Email`} placeholder={i18n`Email Address`} name="email" onChange={this.handleChange} value={this.email} />
+        <Form.Input icon="lock" name="password" type="password" label={i18n`Password`} onChange={this.handleChange} value={this.password} />
         <Grid centered className="equal width">
           <Grid.Row>
             <Grid.Column textAlign="left">
@@ -59,7 +63,7 @@ export default class SignIn extends React.Component<IComponent, {}> {
               <a onClick={state.showResendVerification} style={pointer}>{i18n`Re-send verification`}</a>
             </Grid.Column>
           </Grid.Row>
-          <Divider horizontal inverted>{i18n`Or`}</Divider>
+          <Divider horizontal>{i18n`Or`}</Divider>
           <Grid.Row>
             <Grid.Column textAlign="center">
               <Button type="button" onClick={state.showRegister} color="green" labelPosition="left" content={i18n`Register`} icon="sign in" />

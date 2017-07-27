@@ -1,14 +1,10 @@
 import * as React from 'react';
 import i18n from 'es2015-i18n-tag';
 import { Button } from 'semantic-ui-react';
+import { ISimpleComponent } from './shared';
 
-import * as actions from '../actions/accounts';
-import getState from '../configs/state';
-
-interface IComponent { }
-
-const View = () => {
-  const state = getState();
+const View = ({ state }: ISimpleComponent) => {
+  const currentState = state;
   return (
     <Button primary content={i18n`Sign Out`} onClick={state.logOut} />
   );

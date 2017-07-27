@@ -2,34 +2,39 @@ import * as React from 'react';
 import i18n from 'es2015-i18n-tag';
 import { Form, Grid, Button, Divider } from 'semantic-ui-react';
 
-import * as actions from '../actions/accounts';
-import getState from '../configs/state';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
+import { ISimpleComponent } from './shared';
 
-export interface IComponent { }
 
 @observer
-export default class ForgotPassword extends React.PureComponent<IComponent, {}> {
-  emailResetLink(e: any, serialisedForm: any) {
+export default class ForgotPassword extends React.PureComponent<ISimpleComponent, {}> {
+  @observable email = '';
+
+  emailResetLink = (e: any) => {
     e.preventDefault();
-    actions.emailResetLink(serialisedForm.formData.email);
+    this.props.state.emailResetLink(this.props.state, this.email);
+  }
+
+  handleChange = (_e: React.SyntheticEvent<HTMLInputElement>, { value }: NameValuePair) => {
+    this.email = value;
   }
 
   render() {
-    const state = getState();
+    const currentState = this.props.state;
     return (
-      <Form onSubmit={this.emailResetLink.bind(this)}>
-        <Form.Input icon="mail" label={i18n`Email`} placeholder={i18n`Email Address`} name="email" />
+      <Form onSubmit={this.emailResetLink.bind(this)} className={this.props.inverted ? 'inverted' : ''}>
+        <Form.Input icon="mail" label={i18n`Email`} placeholder={i18n`Email Address`} name="email" onChange={this.handleChange} />
         <Grid centered className="equal width">
           <Grid.Row>
             <Grid.Column textAlign="center">
-              <Button type="submit" loading={state.mutating} primary content={i18n`Email Reset Link`} icon="mail" />
+              <Button type="submit" loading={currentState.mutating} primary content={i18n`Email Reset Link`} icon="mail" />
             </Grid.Column>
           </Grid.Row>
-          <Divider horizontal inverted>{i18n`Or`}</Divider>
+          <Divider horizontal>{i18n`Or`}</Divider>
           <Grid.Row>
             <Grid.Column textAlign="center">
-              <Button type="button" onClick={state.showSignIn} color="green" labelPosition="left" content={i18n`Sign In`} icon="sign in" />
+              <Button type="button" onClick={currentState.showSignIn} color="green" labelPosition="left" content={i18n`Sign In`} icon="sign in" />
             </Grid.Column>
           </Grid.Row>
         </Grid>

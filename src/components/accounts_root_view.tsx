@@ -6,28 +6,44 @@ import ResetPassword from './reset_password_view';
 import Register from './sign_up_view';
 import LogOutView from './log_out_view';
 
-import getState from '../configs/state';
+import { getAccountState } from '../configs/state';
 import { observer } from 'mobx-react';
 
-export interface IComponent {}
+import { IRegistrationComponent, ISimpleComponent } from './shared';
+
+declare global {
+  interface NameValuePair {
+    name: string;
+    value: string;
+  }
+}
+
+export type IComponent = IRegistrationComponent | ISimpleComponent;
+
+const Navigation = observer((props: IComponent) =>
+  <div>
+    {props.state.view === 'forgotPassword' && <ForgotPassword {...props} />}
+    {props.state.view === 'resendVerification' && <ResendVerification {...props} />}
+    {props.state.view === 'resetPassword' && <ResetPassword token={props.state.token} {...props} />}
+    {props.state.view === 'signIn' && <SignIn {...props} />}
+    {props.state.view === 'register' && <Register {...props as IRegistrationComponent} />}
+    {props.state.view === 'loggedIn' && <LogOutView {...props} />}
+  </div>
+);
 
 @observer
-export default class AccountsRoot extends React.Component<IComponent, {}> {
+export default class AccountsRoot extends React.Component<IRegistrationComponent, {}> {
   static displayName = 'AccountsView';
 
   render() {
-    const state = getState();
+    const currentState = this.props.state || getAccountState();
+
     // const { error } = this.props;
     return (
       <div>
-        { state.error && <div className="ui red message">{ state.error }</div>  }
-        { state.info && <div className="ui green message">{ state.info }</div>  }
-        { state.view === 'forgotPassword' && <ForgotPassword {...this.props} />  }
-        { state.view === 'resendVerification' && <ResendVerification {...this.props} /> }
-        { state.view === 'resetPassword' && <ResetPassword token={state.token} {...this.props} />  }
-        { state.view === 'signIn' && <SignIn {...this.props} />  }
-        { state.view === 'register' && <Register {...this.props} />  }
-        { state.view === 'loggedIn' && <LogOutView {...this.props} />  }
+        {currentState.error && <div className="ui red message">{currentState.error}</div>}
+        {currentState.info && <div className="ui green message">{currentState.info}</div>}
+        <Navigation extraFields={this.props.extraFields} state={currentState} inverted={this.props.inverted} />
       </div>
     );
   }
