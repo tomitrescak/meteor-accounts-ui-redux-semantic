@@ -23,7 +23,7 @@ export default class ResendVerification extends React.PureComponent<ISimpleCompo
     const currentState = this.props.state;
     return (
       <Form onSubmit={this.emailVerification.bind(this)} method="post" className={this.props.inverted ? 'inverted' : ''}>
-        <Form.Input label={i18n`Email`} placeholder={i18n`Email Address`} name="email" icon="mail" onChange={this.handleChange} />
+        <Form.Input label={i18n`Email`} placeholder={i18n`Email Address`} name="email" icon="mail" onChange={this.handleChange} value={this.email} />
         <Grid centered className="equal width">
           <Grid.Row>
             <Grid.Column textAlign="center">

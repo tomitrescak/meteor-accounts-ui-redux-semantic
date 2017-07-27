@@ -30,8 +30,8 @@ export default class ResetPassword extends React.PureComponent<IComponent, {}> {
     const state = this.props.state;
     return (
       <Form onSubmit={this.resetPassword.bind(this)} method="post" className={this.props.inverted ? 'inverted' : ''}>
-        <Form.Input type="password" label={i18n`Password`} placeholder={i18n`Password`} name="password1" onChange={this.handleChange} />
-        <Form.Input type="password" label={i18n`Password again`} placeholder={i18n`Password`} name="password2" onChange={this.handleChange} />
+        <Form.Input type="password" label={i18n`Password`} placeholder={i18n`Password`} name="password1" onChange={this.handleChange} value={this.password1} />
+        <Form.Input type="password" label={i18n`Password again`} placeholder={i18n`Password`} name="password2" onChange={this.handleChange} value={this.password2} />
 
         <Grid centered className="equal width">
           <Grid.Row>

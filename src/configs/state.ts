@@ -1,7 +1,7 @@
 import User from './user_model';
 import { trimInput, isEmail, isNotEmpty, isValidPassword, areValidPasswords } from '../configs/helpers';
 import i18n from 'es2015-i18n-tag';
-import { mutate } from 'apollo-mantra';
+import { mutate as apolloMutate } from 'apollo-mantra';
 import { observable, action } from 'mobx';
 
 declare global {
@@ -28,6 +28,7 @@ export class AccountState<T extends User> {
   profileData: string;
 
   createUser: (userData: User) => T;
+  mutate = apolloMutate;
 
   constructor(createUser?: (userData: User) => T, profileData?: string, initialUser?: T) {
     if (createUser) {
@@ -155,7 +156,7 @@ export class AccountState<T extends User> {
     state.mutating = true;
     state.changeLoggingIn(true);
 
-    mutate({
+    this.mutate({
       query: gql`mutation resume($token: String!) {
       resume(token: $token) {
         hashedToken
@@ -200,7 +201,7 @@ export class AccountState<T extends User> {
 
     state.mutating = true;
 
-    mutate({
+    this.mutate({
       query: gql`mutation loginWithPassword($user: UserPasswordInput!) {
       loginWithPassword(user: $user) {
         hashedToken
@@ -249,7 +250,7 @@ export class AccountState<T extends User> {
     }
 
     state.mutating = true;
-    mutate({
+    this.mutate({
       query: gql`
         mutation requestResendVerification($email: String!) {
           requestResendVerification(email: $email)
@@ -292,7 +293,7 @@ export class AccountState<T extends User> {
     }
 
     state.mutating = true;
-    mutate({
+    this.mutate({
       query: gql`
         mutation requestResetPassword($email: String!) {
           requestResetPassword(email: $email)
@@ -341,7 +342,7 @@ export class AccountState<T extends User> {
     }
 
     state.mutating = true;
-    mutate({
+    this.mutate({
       query: gql`mutation resetPassword($token: String!, $password: String!) {
       resetPassword(token: $token, password: $password) {
         hashedToken
@@ -396,7 +397,7 @@ export class AccountState<T extends User> {
 
   verify(state: App.Accounts.State, token: string, profileData: string): void {
     state.mutating = true;
-    mutate({
+    this.mutate({
       query: gql`mutation verify($token: String!) {
       verify(token: $token) {
         hashedToken
@@ -464,6 +465,7 @@ export class AccountState<T extends User> {
     };
 
     if (
+      !isNotEmpty(state, name) ||
       !isNotEmpty(state, email) ||
       !isNotEmpty(state, password) ||
       !isEmail(state, email) ||
@@ -476,7 +478,7 @@ export class AccountState<T extends User> {
     }
 
     state.mutating = true;
-    mutate({
+    this.mutate({
       query: gql`mutation createAccountAndLogin($user: UserPasswordInput!) {
       createAccountAndLogin(user: $user) {
         hashedToken
