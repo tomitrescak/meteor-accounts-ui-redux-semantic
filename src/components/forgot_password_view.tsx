@@ -13,7 +13,7 @@ export default class ForgotPassword extends React.PureComponent<ISimpleComponent
 
   emailResetLink = (e: any) => {
     e.preventDefault();
-    this.props.state.emailResetLink(this.props.state, this.email);
+    this.props.state.emailResetLink(this.email);
   }
 
   handleChange = (_e: React.SyntheticEvent<HTMLInputElement>, { value }: NameValuePair) => {

@@ -19,7 +19,7 @@ export default class ResetPassword extends React.PureComponent<IComponent, {}> {
     const currentState = this.props.state;
     e.preventDefault();
 
-    this.props.state.resetPassword(this.props.state, this.props.token, this.password1, this.password2, currentState.profileData);
+    this.props.state.resetPassword(this.props.token, this.password1, this.password2, currentState.profileData);
   }
 
   handleChange = (_e: React.SyntheticEvent<HTMLInputElement>, { name, value }: NameValuePair) => {

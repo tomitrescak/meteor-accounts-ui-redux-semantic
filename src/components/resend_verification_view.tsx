@@ -12,7 +12,7 @@ export default class ResendVerification extends React.PureComponent<ISimpleCompo
 
   emailVerification = (e: any) => {
     e.preventDefault();
-    this.props.state.resendVerification(this.props.state, this.email);
+    this.props.state.resendVerification(this.email);
   }
 
   handleChange = (_e: React.SyntheticEvent<HTMLInputElement>, { value }: NameValuePair) => {

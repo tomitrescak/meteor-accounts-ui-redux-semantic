@@ -20,7 +20,7 @@ declare global {
 
 export type IComponent = IRegistrationComponent | ISimpleComponent;
 
-const Navigation = observer((props: IComponent) =>
+export const Navigation = observer((props: IComponent) =>
   <div>
     {props.state.view === 'forgotPassword' && <ForgotPassword {...props} />}
     {props.state.view === 'resendVerification' && <ResendVerification {...props} />}
@@ -32,7 +32,7 @@ const Navigation = observer((props: IComponent) =>
 );
 
 @observer
-export default class AccountsRoot extends React.Component<IRegistrationComponent, {}> {
+export class AccountsRoot extends React.Component<IRegistrationComponent, {}> {
   static displayName = 'AccountsView';
 
   render() {
@@ -48,3 +48,5 @@ export default class AccountsRoot extends React.Component<IRegistrationComponent
     );
   }
 }
+
+export default AccountsRoot;

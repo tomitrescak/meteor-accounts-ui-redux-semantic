@@ -1,11 +1,12 @@
 {
   "name": "apollo-authentication-semantic-ui",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "UI for apollo authentication",
   "main": "./dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "node fuse test",
+    "luis": "node fuse luis",
+    "updateSnapshots": "UPDATE_SNAPSHOTS=true node fuse test"
   },
   "types": "./dist/index.d.ts",
   "repository": {
@@ -29,19 +30,23 @@
     "apollo-client": "^1.x.x",
     "apollo-mantra": "^1.5.9",
     "es2015-i18n-tag": "^1.1.6",
-    "mobx": "^3.2.1",
+    "fuse-test-runner": "https://github.com/tomitrescak/fuse-test-runner",
     "mobx-react": "^4.2.2",
     "mobx-state-tree": "^0.9.4",
+    "pre-commit": "^1.2.2",
+    "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "semantic-ui-mobx": "^0.0.17",
     "semantic-ui-react": "^0.71.2",
     "sweetalert2": "^6.6.6",
-    "typestyle": "^1.3.7"
+    "ts-node": "^3.3.0",
+    "typescript": "^2.4.2",
+    "typestyle": "^1.3.7",
+    "wafl": "0.x.x"
   },
-  "dependencies": {
-    "@types/react": "^15.0.39",
-    "mobx": "^3.2.1",
-    "mobx-react": "^4.2.2",
-    "react": "^15.6.1"
-  }
+  "dependencies": {},
+  "pre-commit": [
+    "test"
+  ]
 }

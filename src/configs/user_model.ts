@@ -1,29 +1,38 @@
-export interface UserEmail {
-  address: string;
-  verified: boolean;
-}
+import { types, IModelType, ISnapshottable } from 'mobx-state-tree';
+import { IObservableArray } from 'mobx';
 
-export default class User {
-  _id: string;
-  profile: any;
-  emails: UserEmail[];
-  roles: string[];
+export const UserEmail = types.model('UserEmail', {
+  address: types.string,
+  verified: types.boolean
+});
 
-  constructor(user: User) {
-    this._id = user._id;
-    this.emails = user.emails;
-    this.profile = user.profile;
-    this.roles = user.roles;
+export const ProfileModel = types.model('Profile', {
+  name: ''
+});
+
+export const UserModel = types.model('User',
+  {
+    _id: '',
+    profile: types.optional(ProfileModel, {}),
+    emails: types.array(UserEmail),
+    roles: types.array(types.string)
+  },
+  {
+    isRole(role: string) {
+      return this.roles && this.roles.indexOf(role) >= 0;
+    },
+
+    isAdmin() {
+      return this.roles && this.roles.indexOf('admin') >= 0;
+    },
+    login(_data: any) {
+      /**/
+    },
+    logout() {
+      /**/
+    }
   }
+);
 
-  isRole(role: string) {
-    return this.roles && this.roles.indexOf(role) >= 0;
-  }
-
-  isAdmin() {
-    return this.roles && this.roles.indexOf('admin') >= 0;
-  }
-
-  login(_data: any) { /**/ }
-  logout() { /**/ }
-}
+export type Profile = typeof ProfileModel.Type;
+export type User = typeof UserModel.Type;

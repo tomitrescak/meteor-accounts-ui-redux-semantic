@@ -1,5 +1,7 @@
+import { User } from '../configs/user_model';
+
 export interface ISimpleComponent {
-  state?: App.Accounts.State;
+  state?: App.Accounts.State<User>;
   inverted?: boolean;
 }
 

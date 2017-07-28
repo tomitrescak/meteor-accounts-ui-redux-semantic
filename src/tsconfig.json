@@ -4,7 +4,7 @@
     "target": "es5",
     "module": "commonjs",
     "declaration": true,
-    "noImplicitAny": true,
+    "strict": true,
     "removeComments": false,
     "noLib": false,
     "preserveConstEnums": true,
@@ -14,14 +14,10 @@
     "experimentalDecorators": true,
     "sourceMap": false,
     "allowSyntheticDefaultImports": true,
-    "watch": true,
     "strictNullChecks": false,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "moduleResolution": "node"
   },
   "formatCodeOptions": {
     "indentSize": 2,
