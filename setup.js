@@ -1,11 +1,11 @@
 const html = require('js-beautify').html;
 const gql = require('graphql-tag');
 
-function setup(config, wallaby) {
-  config = config || require('fuse-test-runner').TestConfig;
+function setup({config, wallaby } = {}) {
+  config = config || require('chai-match-snapshot/config').config;
 
   if (wallaby) {
-    setupBridge(config, wallaby);
+    setupWallaby(config, wallaby);
   }
   setupGlobals(config);
   setupSnapshots(config);
@@ -61,9 +61,9 @@ function setupJsDom() {
   // copyProps(window, global);
 }
 
-function setupBridge(TestConfig, wallaby) {
-  var mocha = wallaby ? wallaby.testFramework : require('mocha');
-  TestConfig = TestConfig || require('fuse-test-runner').TestConfig;
+function setupWallaby(config, wallaby) {
+  var mocha = wallaby.testFramework;
+  config = config;
 
   mocha.suite.on('pre-require', function(context) {
     const origIt = context.it;
@@ -84,11 +84,11 @@ function setupBridge(TestConfig, wallaby) {
             parent = parent.parent;
           }
 
-          TestConfig.currentTask = {
+          config.currentTask = {
             className: topParent,
             title: this.test.title
           };
-          TestConfig.snapshotCalls = null;
+          config.snapshotCalls = null;
           // console.log('!!!!!!!!!!!!!!!!');
           // console.log(TestConfig.currentTask);
           return impl();
@@ -156,31 +156,20 @@ function setupEnzyme() {
   }
 }
 
+
 function setupChai() {
   // setup chai
 
   const chai = require('chai');
   const sinonChai = require('sinon-chai');
   const chaiEnzyme = require('chai-enzyme');
-  const should = global.FuseBox ? FuseBox.import('fuse-test-runner').should : require('fuse-test-runner').should;
+  const chaiMatchSnapshot = require('chai-match-snapshot').chaiMatchSnapshot;
+  // const should = global.FuseBox ? FuseBox.import('fuse-test-runner').should : require('fuse-test-runner').should;
 
   chai.should();
   chai.use(sinonChai);
   chai.use(chaiEnzyme());
-
-  const Assertion = chai.Assertion;
-
-  Assertion.addMethod('matchSnapshot', function() {
-    let obj = this._obj;
-    try {
-      should(this._obj).matchSnapshot();
-    } catch (ex) {
-      if (ex.expected) {
-        new Assertion(ex.expected).to.equal(ex.current);
-      }
-      throw ex;
-    }
-  });
+  chai.use(chaiMatchSnapshot);
 }
 
 function setupGlobals() {
@@ -245,7 +234,7 @@ function __runTests(test, className) {
 }
 
 function setupLuis() {
-  const testConfig = require('fuse-test-runner').TestConfig;
+  const testConfig = require('chai-match-snapshot').config;
 
   setupSerialiser(testConfig);
   setupEnzyme();

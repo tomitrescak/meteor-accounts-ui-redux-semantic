@@ -45,7 +45,7 @@ const userModel = types.optional(composedUserModel, {
 
 describe('AccountsRegisterTest', () => {
   const data = {
-    // css: 'ui inverted segment',
+    css: 'ui segment m12',
     story: 'Register',
     info: '',
     folder: 'User/Login',
