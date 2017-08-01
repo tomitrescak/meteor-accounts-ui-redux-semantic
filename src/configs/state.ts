@@ -16,25 +16,27 @@ declare global {
       token: string;
       userId: string;
       view: string;
-      loginEmail: Form.Field<string>,
-      loginPassword: Form.Field<string>,
-      registerPassword1: Form.Field<string>,
-      registerPassword2: Form.Field<string>,
-      registerName: Form.Field<string>,
-      profile: any,
+      loginEmail: Form.Field<string>;
+      loginPassword: Form.Field<string>;
+      registerPassword1: Form.Field<string>;
+      registerPassword2: Form.Field<string>;
+      registerName: Form.Field<string>;
+      profile: any;
       coldStart(verifyToken: string, profileData: string): void;
       emailResetLink(email: string, callback?: Function): void;
       init(): void;
+      logIn(): void;
       logOut(): void;
+      mutate(): void;
       resendVerification(email: string, callback?: Function): void;
       setView(view: string): void;
+      showError(message: string): void;
       showForgotPassword(): void;
       showRegister(): void;
       showResendVerification(): void;
       showSignIn(): void;
       signIn(email: string, password: string, profileData: string): void;
       register(
-        _state: any,
         name: string,
         email: string,
         password: string,
@@ -70,24 +72,19 @@ let mutation = apolloMutate;
 
 // import { IMutation } from 'apollo-mantra';
 
-function getParameterByName(name: string) {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-  let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
-  return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-}
-
-export function createState<T extends User>(userModel: IModelType<User, User>, profileModel: IModelType<Profile, Profile>): App.Accounts.State<T> {
+export function createState<T extends User>(userModel: IModelType<User, User>): App.Accounts.State<T> {
   const AccountState = types.model(
     'AccountState',
     {
-      loginEmail: Form.requiredField(''),
+      loginEmail: Form.requiredField('', [Form.emailValidator]),
       loginPassword: Form.requiredField(''),
-      registerPassword1: Form.requiredField(''),
-      registerPassword2: Form.requiredField(''),
+      registerPassword1: Form.requiredField('', [
+        Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`)
+      ]),
+      registerPassword2: Form.requiredField('', [
+        Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`)
+      ]),
       registerName: Form.requiredField(''),
-      registerProfile: types.optional(profileModel, {}),
       view: 'signIn',
       error: '',
       info: '',
@@ -103,23 +100,33 @@ export function createState<T extends User>(userModel: IModelType<User, User>, p
       setView(view: string) {
         this.view = view;
       },
+      setMutating(mutating: boolean) {
+        this.mutating = mutating;
+      },
       showError(error: string) {
+        console.log('Done ...');
         this.error = error;
       },
 
       showInfo(info: string) {
         this.info = info;
       },
-
+      getParameterByName(name: string) {
+        if (typeof window === 'undefined') {
+          return null;
+        }
+        let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+        return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+      },
       init() {
         // setup current view
         let defaultView = 'signIn';
-        const initialToken = getParameterByName('resetPassword');
+        const initialToken = this.getParameterByName('resetPassword');
         if (initialToken) {
           this.token = initialToken;
           defaultView = 'resetPassword';
         }
-        const verifyToken = getParameterByName('verifyEmail');
+        const verifyToken = this.getParameterByName('verifyEmail');
         this.view = defaultView;
 
         // resume in next click
@@ -275,20 +282,21 @@ export function createState<T extends User>(userModel: IModelType<User, User>, p
 
         this.mutating = true;
 
-        this.mutate({
-          query: gql`mutation loginWithPassword($user: UserPasswordInput!) {
-      loginWithPassword(user: $user) {
-        hashedToken
-        expires
-        user {
-          _id
-          profile {
-            ${profileData}
-          }
-          roles
-        }
-      }
-    }`,
+        return this.mutate({
+          query: gql`
+            mutation loginWithPassword($user: UserPasswordInput!) {
+              loginWithPassword(user: $user) {
+                hashedToken
+                expires
+                user {
+                  _id
+                  profile {
+                    ${profileData}
+                  }
+                  roles
+                }
+              }
+            }`,
           variables: {
             user: {
               email,
@@ -296,6 +304,7 @@ export function createState<T extends User>(userModel: IModelType<User, User>, p
             }
           },
           catchCallback: error => {
+            console.log(error.message);
             if (error.graphQLErrors) {
               error = error.graphQLErrors[0] as any;
             }
@@ -310,7 +319,7 @@ export function createState<T extends User>(userModel: IModelType<User, User>, p
             this.logIn(data.loginWithPassword);
           },
           finalCallback: () => {
-            this.mutating = false;
+            this.setMutating(false);
           }
         });
       },
@@ -519,7 +528,6 @@ export function createState<T extends User>(userModel: IModelType<User, User>, p
       },
 
       register(
-        _state: any,
         name: string,
         email: string,
         password: string,
@@ -609,9 +617,11 @@ export function createState<T extends User>(userModel: IModelType<User, User>, p
 
 let state: any;
 
-export function getAccountState<T extends User>({ userType = UserModel, profileType = ProfileModel, cache = true } = {}): App.Accounts.State<T> {
+export function getAccountState<T extends User>(
+  { userType = UserModel as any, cache = true } = {}
+): App.Accounts.State<T> {
   if (!cache || !state) {
-    state = createState(userType as any, profileType as any);
+    state = createState(userType as any);
   }
   return state;
   // return createState(userType as any);
@@ -626,4 +636,3 @@ export function getAccountState<T extends User>({ userType = UserModel, profileT
 // unprotect(g);
 // g.loginEmail..user.profile.name = 'ty';
 // console.log(g.user.profile.name);
-

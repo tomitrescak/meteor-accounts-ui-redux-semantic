@@ -70,7 +70,7 @@ describe('AccountsViewTest', () => {
     wrapper.find('button[type="submit"]').simulate('submit');
 
     // saveStub.should.have.been.called;
-    saveStub.should.have.been.calledWith(create.testEmail + 1, create.testPassword, state.profileData);
+    saveStub.should.have.been.calledWith(create.testEmail, create.testPassword, state.profileData);
   });
 
   // it('Renders sign-in view', function() {

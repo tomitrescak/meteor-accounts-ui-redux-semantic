@@ -67,7 +67,7 @@ Sparky.task('luis', () => {
         outFile: `public/styles/luis.css`,
         inject: false
       }),
-      WebIndexPlugin({ template: 'src/luis/luis.html' }),
+      // WebIndexPlugin({ template: 'src/luis/luis.html' }),
       // WebIndexPlugin(),
     ],
     shim: {

@@ -6,6 +6,7 @@ module.exports = function(wallaby) {
 
   return {
     files: [
+      './setup.js',
       'src/**/*.ts*',
       '!**/luis.ts',
       '!src/**/*.test.tsx',
@@ -27,7 +28,7 @@ module.exports = function(wallaby) {
     },
     testFramework: 'mocha',
     setup: function(wallaby) {     
-      require('wafl').setup(null, wallaby);
+      require('./setup').setup(null, wallaby);
     }
   };
 };

@@ -6,11 +6,24 @@ export const UserEmail = types.model('UserEmail', {
   verified: types.boolean
 });
 
-export const ProfileModel = types.model('Profile', {
-  name: ''
-});
+export const ProfileModel = types.model(
+  'Profile',
+  {
+    name: ''
+  },
+  {
+    json(): {} {
+      throw new Error('Not implemented!');
+    },
+    parse(model: any) {
+      /**/
+      throw new Error('Not implemented!');
+    }
+  }
+);
 
-export const UserModel = types.model('User',
+export const UserModel = types.model(
+  'User',
   {
     _id: '',
     profile: types.optional(ProfileModel, {}),
@@ -30,6 +43,13 @@ export const UserModel = types.model('User',
     },
     logout() {
       /**/
+    },
+    json(): {} {
+      throw new Error('Not implemented!');
+    },
+    parse(model: any) {
+      /**/
+      throw new Error('Not implemented!');
     }
   }
 );
