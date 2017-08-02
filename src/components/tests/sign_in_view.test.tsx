@@ -1,20 +1,18 @@
 import * as React from 'react';
 import { AccountsRoot } from '../accounts_root_view';
 import { mount } from 'enzyme';
-import { Segment } from 'semantic-ui-react';
-import { should } from 'fuse-test-runner';
 import * as sinon from 'sinon';
-import { createState } from '../../configs/state';
-import { getAccountState } from '../../index';
+import { getAccountState, AccountsView } from '../../index';
 import { User } from '../../configs/user_model';
 import { create } from './test_data';
+import { Segment } from 'semantic-ui-react';
 
 describe('AccountsViewTest', () => {
   const data = {
     // css: 'ui inverted segment',
     story: 'Sign In',
     info: '',
-    folder: 'User/Login',
+    folder: 'Accounts',
     get state() {
       return getAccountState({ cache: false });
       // state.profileData = undefined;
@@ -41,20 +39,35 @@ describe('AccountsViewTest', () => {
     wrapper.should.matchSnapshot();
   });
 
+  it('Renders inverted view', function() {
+    const state = data.state;
+    state.setView('signIn');
+    const wrapper = mount(<Segment inverted><AccountsView state={state} extraFields={() => null} inverted={true} /></Segment>);
+
+    wrapper.should.matchSnapshot();
+  });
+
   it('Shows registration screen when clicking on "Register"', function() {
     const wrapper = mount(data.component);
+    wrapper.find('input[name="email"]').change(create.testEmail);
+
     wrapper.findWhere(w => w.prop('content') === 'Register').simulate('click');
     wrapper.should.matchSnapshot();
   });
 
   it('Shows forgot password screen when clicking on "Forgot Password?"', function() {
     const wrapper = mount(data.component);
+    wrapper.find('input[name="email"]').change(create.testEmail);
+
     wrapper.findWhere(w => w.name() === 'a' && w.text() === 'Forgot Password?').simulate('click');
+
     wrapper.should.matchSnapshot();
   });
 
   it('Shows verification screen when clicking on "Re-send verification"', function() {
     const wrapper = mount(data.component);
+    wrapper.find('input[name="email"]').change(create.testEmail);
+
     wrapper.findWhere(w => w.name() === 'a' && w.text() === 'Re-send verification').simulate('click');
     wrapper.should.matchSnapshot();
   });

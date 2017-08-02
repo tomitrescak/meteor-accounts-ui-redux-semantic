@@ -4,7 +4,6 @@ import { Grid, Button, Divider } from 'semantic-ui-react';
 import * as Form from 'semantic-ui-mobx';
 
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 import { ISimpleComponent } from './shared';
 
 // import { style } from 'typestyle';
@@ -34,10 +33,6 @@ export default class SignIn extends React.Component<ISimpleComponent, {}> {
     e.preventDefault();
 
     this.props.state.signIn(state.loginEmail.value, state.loginPassword.value, state.profileData);
-  };
-
-  handleChange = (_e: React.SyntheticEvent<HTMLInputElement>, { name, value }: NameValuePair) => {
-    this[name] = value;
   };
 
   render() {

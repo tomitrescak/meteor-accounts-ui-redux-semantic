@@ -26,20 +26,8 @@
     "skipDefaultLibCheck": true,
     "moduleResolution": "node"
   },
-  "formatCodeOptions": {
-    "indentSize": 2,
-    "tabSize": 2,
-    "convertTabsToSpaces": true,
-    "insertSpaceAfterCommaDelimiter": true,
-    "insertSpaceAfterSemicolonInForStatements": true,
-    "insertSpaceBeforeAndAfterBinaryOperators": true,
-    "insertSpaceAfterKeywordsInControlFlowStatements": true,
-    "insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
-    "insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
-    "placeOpenBraceOnNewLineForFunctions": false,
-    "placeOpenBraceOnNewLineForControlBlocks": false
-  },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

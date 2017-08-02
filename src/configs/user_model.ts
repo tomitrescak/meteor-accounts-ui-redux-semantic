@@ -1,4 +1,5 @@
-import { types, IModelType, ISnapshottable } from 'mobx-state-tree';
+// tslint:disable-next-line:no-unused-variable
+import { types, ISnapshottable, IModelType } from 'mobx-state-tree';
 import { IObservableArray } from 'mobx';
 
 export const UserEmail = types.model('UserEmail', {
@@ -6,8 +7,15 @@ export const UserEmail = types.model('UserEmail', {
   verified: types.boolean
 });
 
-export const ProfileModel = types.model(
+export const UserProfileModel = types.model(
   'Profile',
+  {
+    name: ''
+  }
+);
+
+export const RegisterProfileModel = types.model(
+  'RegisterProfile',
   {
     name: ''
   },
@@ -26,7 +34,7 @@ export const UserModel = types.model(
   'User',
   {
     _id: '',
-    profile: types.optional(ProfileModel, {}),
+    profile: types.optional(UserProfileModel, {}),
     emails: types.array(UserEmail),
     roles: types.array(types.string)
   },
@@ -54,5 +62,8 @@ export const UserModel = types.model(
   }
 );
 
-export type Profile = typeof ProfileModel.Type;
+export type UserProfile = typeof UserProfileModel.Type;
+export type RegisterProfile = typeof RegisterProfileModel.Type;
 export type User = typeof UserModel.Type;
+
+

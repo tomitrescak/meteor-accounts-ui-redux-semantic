@@ -3,7 +3,6 @@ import i18n from 'es2015-i18n-tag';
 import { Grid, Button, Divider } from 'semantic-ui-react';
 
 import { observer } from 'mobx-react';
-import { observable, toJS } from 'mobx';
 import { IRegistrationComponent } from './shared';
 
 import * as Form from 'semantic-ui-mobx';
@@ -15,30 +14,30 @@ export default class SignUp extends React.PureComponent<IRegistrationComponent, 
 
     const currentState = this.props.state;
 
-    if (!currentState.loginEmail.isValid() ||
-        !currentState.registerName.isValid() ||
-        !currentState.registerPassword1.isValid() ||
-        !currentState.registerPassword2.isValid()) {
-      return;
-    }
-
-    if (!currentState.user.profile.json) {
+    if (!currentState.registerProfile.json) {
       throw new Error('You need to implement json() and parse() functions in user and profile!');
     }
 
+    if (
+      !currentState.loginEmail.isValid() ||
+      !currentState.registerName.isValid() ||
+      !currentState.registerPassword1.isValid() ||
+      !currentState.registerPassword2.isValid()
+    ) {
+      return;
+    }
+
+    console.log(currentState.registerProfile);
+
     this.props.state.register(
       currentState.registerName.value,
-      currentState.loginEmail.value ? currentState.loginEmail.value.toLowerCase() : '',
+      currentState.loginEmail.value.toLowerCase(),
       currentState.registerPassword1.value,
       currentState.registerPassword2.value,
       currentState.profileData,
-      currentState.user.profile.json()
+      currentState.registerProfile.json()
     );
   }
-
-  handleChange = (_e: React.SyntheticEvent<HTMLInputElement>, { name, value }: NameValuePair) => {
-    this[name] = value;
-  };
 
   render() {
     const currentState = this.props.state;
@@ -74,7 +73,7 @@ export default class SignUp extends React.PureComponent<IRegistrationComponent, 
           owner={currentState.registerPassword2}
         />
 
-        {this.props.extraFields(currentState.user.profile)}
+        {this.props.extraFields(currentState.registerProfile)}
 
         <Grid centered className="equal width">
           <Grid.Row>
@@ -82,7 +81,7 @@ export default class SignUp extends React.PureComponent<IRegistrationComponent, 
               <Button type="submit" loading={currentState.mutating} primary content={i18n`Register`} />
             </Grid.Column>
           </Grid.Row>
-          <Divider horizontal>{i18n`Or`}</Divider>
+          <Divider horizontal inverted={this.props.inverted}>{i18n`Or`}</Divider>
           <Grid.Row>
             <Grid.Column textAlign="center">
               <Button

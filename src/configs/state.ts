@@ -1,10 +1,14 @@
-import { User, UserModel, Profile, ProfileModel } from './user_model';
-import { trimInput, isEmail, isNotEmpty, isValidPassword, areValidPasswords } from '../configs/helpers';
+import * as Form from 'semantic-ui-mobx';
+// tslint:disable-next-line:no-unused-variable
+import { types, IModelType, ISnapshottable, IType } from 'mobx-state-tree';
+// tslint:disable-next-line:no-unused-variable
+import { IObservableArray } from 'mobx';
+
 import i18n from 'es2015-i18n-tag';
 import { mutate as apolloMutate } from 'apollo-mantra';
-import { observable, action, IObservableArray } from 'mobx';
-import { types, IModelType, IType, ISnapshottable, unprotect } from 'mobx-state-tree';
-import * as Form from 'semantic-ui-mobx';
+import { Snapshot } from 'mobx-state-tree/dist/types/complex-types/object';
+import { UserModel, RegisterProfile, RegisterProfileModel, User } from './user_model';
+import { trimInput, isEmail, isNotEmpty, isValidPassword, areValidPasswords } from '../configs/helpers';
 
 declare global {
   namespace App.Accounts {
@@ -14,6 +18,7 @@ declare global {
       mutating: boolean;
       profileData: string;
       token: string;
+      user: User;
       userId: string;
       view: string;
       loginEmail: Form.Field<string>;
@@ -22,6 +27,7 @@ declare global {
       registerPassword2: Form.Field<string>;
       registerName: Form.Field<string>;
       profile: any;
+      registerProfile: any;
       coldStart(verifyToken: string, profileData: string): void;
       emailResetLink(email: string, callback?: Function): void;
       init(): void;
@@ -29,7 +35,11 @@ declare global {
       logOut(): void;
       mutate(): void;
       resendVerification(email: string, callback?: Function): void;
+      setProfileData(profileData: string): void;
       setView(view: string): void;
+      setToken(token: string): void;
+      setUser(user: Snapshot<User>): void;
+      setUserId(id: string): void;
       showError(message: string): void;
       showForgotPassword(): void;
       showRegister(): void;
@@ -72,25 +82,29 @@ let mutation = apolloMutate;
 
 // import { IMutation } from 'apollo-mantra';
 
-export function createState<T extends User>(userModel: IModelType<User, User>): App.Accounts.State<T> {
+export function createState<T extends User>(
+  userModel: IModelType<typeof UserModel.SnapshotType, User>,
+  profileModel: IModelType<typeof RegisterProfileModel.SnapshotType, RegisterProfile>
+): App.Accounts.State<T> {
   const AccountState = types.model(
     'AccountState',
     {
       loginEmail: Form.requiredField('', [Form.emailValidator]),
       loginPassword: Form.requiredField(''),
       registerPassword1: Form.requiredField('', [
-        Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`)
+        Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`),
       ]),
       registerPassword2: Form.requiredField('', [
         Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`)
       ]),
       registerName: Form.requiredField(''),
+      registerProfile: types.optional(profileModel, {}),
       view: 'signIn',
       error: '',
       info: '',
       token: '',
-      userId: '',
-      user: types.optional(userModel, { emails: [], roles: [] }),
+      userId: types.maybe(types.string),
+      user: types.maybe(userModel),
       loggingIn: false,
       mutating: false,
       profileData: ''
@@ -100,8 +114,17 @@ export function createState<T extends User>(userModel: IModelType<User, User>): 
       setView(view: string) {
         this.view = view;
       },
+      setProfileData(profileData: string) {
+        this.profileData = profileData;
+      },
       setMutating(mutating: boolean) {
         this.mutating = mutating;
+      },
+      setUserId(id: string) {
+        this.userId = id;
+      },
+      setUser(user: User) {
+        this.user = user;
       },
       showError(error: string) {
         console.log('Done ...');
@@ -612,16 +635,16 @@ export function createState<T extends User>(userModel: IModelType<User, User>): 
     }
   );
 
-  return AccountState.create() as any;
+  return AccountState.create({ user: null, userId: null }) as any;
 }
 
 let state: any;
 
 export function getAccountState<T extends User>(
-  { userType = UserModel as any, cache = true } = {}
+  { userType = UserModel as any, profileType = types.optional(RegisterProfileModel, {}) as any, cache = true } = {}
 ): App.Accounts.State<T> {
   if (!cache || !state) {
-    state = createState(userType as any);
+    state = createState(userType as any, profileType as any);
   }
   return state;
   // return createState(userType as any);

@@ -8,3 +8,8 @@ export interface ISimpleComponent {
 export interface IRegistrationComponent extends ISimpleComponent {
   extraFields: (profile: object) => JSX.Element | JSX.Element[];
 }
+
+export interface NameValuePair {
+  name: string;
+  value: string;
+}

@@ -1,5 +1,4 @@
 import ApolloClient from 'apollo-client';
-import gql from 'graphql-tag';
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
 import { mockNetworkInterfaceWithSchema } from 'apollo-test-utils';
 import { getAccountState } from '../state';
@@ -78,7 +77,7 @@ describe('State', () => {
     (() => state.signIn('email@email.com', 'password', '')).should.throw('GraphQLError');
   });
 
-  it('allows sign in with email, password and profile data', async () => {
+  xit('allows sign in with email, password and profile data', async () => {
     // const q = await client.query({
     //   query: gql`
     //     {

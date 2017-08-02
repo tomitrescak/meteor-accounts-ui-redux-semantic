@@ -551,9 +551,9 @@ chai-enzyme@0.x.x:
     html "^1.0.0"
     react-element-to-jsx-string "^5.0.0"
 
-chai-match-snapshot@^1.0.9:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/chai-match-snapshot/-/chai-match-snapshot-1.0.11.tgz#2c42e0450b06ba9dd6da22c7a28fadd1f6f18fc4"
+chai-match-snapshot, chai-match-snapshot@1.x.x:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/chai-match-snapshot/-/chai-match-snapshot-1.0.12.tgz#081dbe405697c5ccf31be92adf1273d5c66fb9dc"
   dependencies:
     "@types/node" "^8.0.17"
 
@@ -2335,9 +2335,9 @@ lru-cache@^4.0.1:
     pseudomap "^1.0.2"
     yallist "^2.1.2"
 
-luis:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/luis/-/luis-1.2.5.tgz#2b7b9928b1f61eca7786060df2dc6411d280a1b4"
+luis@1.2.18:
+  version "1.2.18"
+  resolved "https://registry.yarnpkg.com/luis/-/luis-1.2.18.tgz#4d4040434ad8bee6035e5368fba5b48a348d3bd3"
   dependencies:
     "@types/expect" "1.x.x"
     connect-history-api-fallback "1.x.x"
@@ -3925,16 +3925,16 @@ verror@1.3.6:
   dependencies:
     extsprintf "1.0.2"
 
-wafl:
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/wafl/-/wafl-0.0.14.tgz#9a4f0bdae4d14f6d68f50cba23a69422cc145042"
+wafl@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/wafl/-/wafl-0.0.16.tgz#3be8b556c5aff7afd42e5ba72b88c79851353864"
   dependencies:
     "@types/chai" "4.x.x"
     "@types/chai-enzyme" "0.x.x"
     "@types/sinon" "2.x.x"
     "@types/sinon-chai" "2.x.x"
     chai-enzyme "0.x.x"
-    chai-match-snapshot "^1.0.9"
+    chai-match-snapshot "1.x.x"
     enzyme "2.x.x"
     enzyme-to-json "1.x.x"
     js-beautify "1.x.x"

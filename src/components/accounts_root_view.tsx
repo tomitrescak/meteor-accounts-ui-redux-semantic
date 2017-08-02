@@ -11,13 +11,6 @@ import { observer } from 'mobx-react';
 
 import { IRegistrationComponent, ISimpleComponent } from './shared';
 
-declare global {
-  interface NameValuePair {
-    name: string;
-    value: string;
-  }
-}
-
 export type IComponent = IRegistrationComponent | ISimpleComponent;
 
 export const Navigation = observer((props: IComponent) =>
@@ -41,8 +34,14 @@ export class AccountsRoot extends React.Component<IRegistrationComponent, {}> {
     // const { error } = this.props;
     return (
       <div>
-        {currentState.error && <div className="ui red message">{currentState.error}</div>}
-        {currentState.info && <div className="ui green message">{currentState.info}</div>}
+        {currentState.error &&
+          <div className="ui red message">
+            {currentState.error}
+          </div>}
+        {currentState.info &&
+          <div className="ui green message">
+            {currentState.info}
+          </div>}
         <Navigation extraFields={this.props.extraFields} state={currentState} inverted={this.props.inverted} />
       </div>
     );

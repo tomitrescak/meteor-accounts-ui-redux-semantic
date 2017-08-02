@@ -1,17 +1,27 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import { Segment } from 'semantic-ui-react';
-import { should } from 'fuse-test-runner';
 import * as sinon from 'sinon';
 import { create } from './test_data';
-import { expect } from 'chai';
 import { AccountsRoot } from '../accounts_root_view';
 import { getAccountState } from '../../index';
 import * as Form from 'semantic-ui-mobx';
 import { User, UserModel } from '../../configs/user_model';
 import { types } from 'mobx-state-tree';
+import { Segment } from 'semantic-ui-react';
 
 const profileModel = types.model('Profile', {
+  organisation: types.maybe(types.string),
+  interest: types.maybe(types.string)
+}, {
+  json(): any {
+    return {
+      organisation: this.organisation,
+      interest: this.interest
+    }
+  }
+});
+
+const registerProfileModel = types.model('Profile', {
   organisation: Form.requiredField(''),
   interest: Form.simpleField('')
 }, {
@@ -21,6 +31,10 @@ const profileModel = types.model('Profile', {
       interest: this.interest.value
     }
   }
+});
+
+const invalidProfileModel = types.model('Profile', {
+  some: ''
 });
 
 const composedUserModel = types.compose('User', UserModel, {
@@ -48,10 +62,13 @@ describe('AccountsRegisterTest', () => {
     css: 'ui segment m12',
     story: 'Register',
     info: '',
-    folder: 'User/Login',
+    folder: 'Accounts',
     options: [{ name: 'Option 1', id: '1' }, { name: 'Option 2', id: '2' }],
+    get state() {
+      return getAccountState({ cache: false, userType: userModel, profileType: registerProfileModel });
+    },
     get component() {
-      const state = getAccountState({ cache: false, userType: userModel });
+      const state = this.state;
       state.setView('register');
 
       return (
@@ -97,6 +114,23 @@ describe('AccountsRegisterTest', () => {
     const wrapper = mount(data.component);
     fill(wrapper);
     wrapper.should.matchSnapshot();
+  });
+
+  it('Renders inverted view', function() {
+    const state = data.state;
+    state.setView('register');
+    const wrapper = mount(<Segment inverted><AccountsRoot state={state} extraFields={() => null} inverted={true} /></Segment>);
+
+    wrapper.should.matchSnapshot();
+  });
+
+  it('detects incorrect profile', function() {
+    const state = getAccountState({ cache: false, userType: userModel, profileType: invalidProfileModel });
+    state.setView('register');
+    console.log(state.registerProfile)
+    const wrapper = mount(<Segment inverted><AccountsRoot state={state} extraFields={() => null} inverted={true} /></Segment>);
+
+    (() => wrapper.find('form').simulate('submit')).should.throw('You need to implement json() and parse() functions in user and profile!');
   });
 
   it('calls registration function', function() {
