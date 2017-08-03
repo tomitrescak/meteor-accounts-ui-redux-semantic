@@ -6,6 +6,7 @@ export const create = {
   testProfile: {
     organisation: 'WSU'
   },
+  testToken: '#token',
   user: () => ({
     _id: '1',
     roles: ['role'],

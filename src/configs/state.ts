@@ -133,10 +133,10 @@ export function createState<T extends User>(
         this.info = info;
       },
       getParameterByName(name: string) {
-        if (typeof window === 'undefined') {
-          return null;
-        }
-        let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+        // if (typeof window === 'undefined') {
+        //   return null;
+        // }
+        let match = RegExp('[?&]' + name + '=([^&]*)').exec(location.search);
         return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
       },
       init() {
@@ -196,31 +196,26 @@ export function createState<T extends User>(
 
       showSignIn() {
         this.view = 'signIn';
-        this.error = '';
-        this.info = '';
+        this.clearErrors();
       },
 
       showResendVerification() {
         this.view = 'resendVerification';
-        this.error = '';
-        this.info = '';
+        this.clearErrors();
       },
       showRegister() {
         this.view = 'register';
-        this.error = '';
-        this.info = '';
+        this.clearErrors();
       },
       showForgotPassword() {
         this.view = 'forgotPassword';
-        this.error = '';
-        this.info = '';
+        this.clearErrors();
       },
-      showResetPassword(token: string) {
-        this.view = 'resetPassword';
-        this.error = '';
-        this.info = '';
-        this.token = token;
-      },
+      // showResetPassword(token: string) {
+      //   this.view = 'resetPassword';
+      //   this.clearErrors();
+      //   this.token = token;
+      // },
       clearErrors() {
         this.error = '';
         this.info = '';
@@ -231,11 +226,11 @@ export function createState<T extends User>(
       },
 
       coldStart(verifyToken: string, profileData: string) {
-        if (typeof window === 'undefined') {
-          return;
-        }
+        // if (typeof window === 'undefined') {
+        //   return;
+        // }
 
-        if (window.localStorage) {
+        if (localStorage) {
           // verify
           if (verifyToken) {
             this.verify(verifyToken, profileData);
@@ -251,7 +246,8 @@ export function createState<T extends User>(
             this.resume(token, expiration, profileData);
           }
         } else {
-          setTimeout(this.coldStart, 100);
+          // setTimeout(this.coldStart, 100);
+          this.showError(i18n`You cannot log in in private mode. Please turn it off and try again.`)
         }
       },
 
@@ -290,7 +286,7 @@ export function createState<T extends User>(
             this.logIn(data.resume);
           },
           finalCallback: () => {
-            this.mutating = false;
+            this.setMutating(false);
           }
         });
       },
@@ -380,7 +376,7 @@ export function createState<T extends User>(
             this.showInfo(i18n`We sent you instructions on how to verify your email`);
           },
           finalCallback: () => {
-            this.mutating = false;
+            this.setMutating(false);
           }
         });
       },
@@ -416,7 +412,7 @@ export function createState<T extends User>(
             this.showInfo(i18n`We sent you an email with password reset instructions`);
           },
           finalCallback: () => {
-            this.mutating = false;
+            this.setMutating(false);
           }
         });
       },
@@ -462,17 +458,18 @@ export function createState<T extends User>(
           },
           thenCallback: (data: any) => {
             // this.showInfo('accounts.messages.passwordChanged'));
+            this.logIn(data.resetPassword);
+
             const url = location.href.split('?')[0];
+
             if (history && history.pushState) {
               history.pushState(null, '', url);
-              this.logIn(data.resetPassword);
             } else {
-              this.logIn(data.resetPassword);
-              window.location.href = url;
+              location.href = url;
             }
           },
           finalCallback: () => {
-            this.mutating = false;
+            this.setMutating(false);
           }
         });
       },
@@ -518,11 +515,11 @@ export function createState<T extends User>(
             if (history && history.pushState) {
               history.pushState(null, '', url);
             } else {
-              window.location.href = url;
+              location.href = url;
             }
           },
           finalCallback: () => {
-            this.mutating = false;
+            this.setMutating(false);
           }
         });
       },
