@@ -4,10 +4,10 @@
   "description": "UI for apollo authentication",
   "main": "./dist/index.js",
   "scripts": {
-    "test": "mocha --require ./mocha.js --ui snapshots --report lcovonly src/**/*.test.tsx --compilers ts:ts-node/register",
-    "testjs": "mocha --require ./mocha.js --ui snapshots --report lcovonly dist/**/*.test.js",
+    "test": "mocha --require ./mocha.js --ui snapshots --report lcovonly 'src/**/*.test.ts*' --compilers ts:ts-node/register",
+    "testjs": "mocha --require ./mocha.js --ui snapshots --report lcovonly 'dist/**/*.test.js'",
     "test_fuse": "node fuse test",
-    "coverage": "NODE_ENV=test nyc npm test && nyc report --reporter=lcov",
+    "coverage": "NODE_ENV=test nyc npm run test && nyc report --reporter=lcov",
     "luis": "node fuse luis",
     "updateSnapshots": "UPDATE_SNAPSHOTS=true npm run test"
   },
@@ -66,5 +66,24 @@
   },
   "pre-commit": [
     "test"
-  ]
+  ],
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  }
 }

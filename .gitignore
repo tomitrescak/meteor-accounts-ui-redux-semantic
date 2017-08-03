@@ -3,3 +3,4 @@ node_modules
 .fusebox
 public/
 .nyc_output
+coverage
