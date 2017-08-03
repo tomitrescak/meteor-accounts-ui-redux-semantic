@@ -1,5 +1,4 @@
 import i18n from 'es2015-i18n-tag';
-import { User } from './user_model';
 
 export function trimInput(value: string) {
   return value.replace(/^\s*|\s*$/g, '');
@@ -31,7 +30,8 @@ export function isValidPassword(state: any, password: string) {
 };
 
 export function areValidPasswords(state: any, password: string, confirm: string) {
-  if (!isValidPassword(state, password)) {
+  if (password.length < 7) {
+    state.error = i18n`Password needs to have at least 7 characters`;
     return false;
   }
   if (password !== confirm) {

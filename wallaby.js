@@ -27,7 +27,7 @@ module.exports = function(wallaby) {
       runner: '/usr/local/bin/node'
     },
     testFramework: 'mocha',
-    filesWithNoCoverageCalculated: ['src/luis/**/*.*', './'],
+    filesWithNoCoverageCalculated: ['src/luis/**/*.*', 'setup.js'],
     setup: function(wallaby) {
       require('wafl').setup({ wallaby });
     }

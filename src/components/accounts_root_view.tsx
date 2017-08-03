@@ -5,8 +5,6 @@ import ResendVerification from './resend_verification_view';
 import ResetPassword from './reset_password_view';
 import Register from './sign_up_view';
 import LogOutView from './log_out_view';
-
-import { getAccountState } from '../configs/state';
 import { observer } from 'mobx-react';
 
 import { IRegistrationComponent, ISimpleComponent } from './shared';
@@ -29,7 +27,7 @@ export class AccountsRoot extends React.Component<IRegistrationComponent, {}> {
   static displayName = 'AccountsView';
 
   render() {
-    const currentState = this.props.state || getAccountState();
+    const currentState = this.props.state;
 
     // const { error } = this.props;
     return (

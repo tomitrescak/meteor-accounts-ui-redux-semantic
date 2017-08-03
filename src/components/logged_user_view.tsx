@@ -3,7 +3,6 @@ import { Dropdown, Icon, Menu } from 'semantic-ui-react';
 import i18n from 'es2015-i18n-tag';
 
 import { observer } from 'mobx-react';
-import { getAccountState } from '../configs/state';
 import { ISimpleComponent } from './shared';
 
 export interface IComponent extends ISimpleComponent {
@@ -15,7 +14,7 @@ export interface IComponent extends ISimpleComponent {
 @observer
 export class UserView extends React.PureComponent<IComponent, {}> {
   render() {
-    const currentState = this.props.state || getAccountState();
+    const currentState = this.props.state;
     if (!currentState.userId) {
       return <span></span>;
     };

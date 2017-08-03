@@ -10,89 +10,86 @@ import { Snapshot } from 'mobx-state-tree/dist/types/complex-types/object';
 import { UserModel, RegisterProfile, RegisterProfileModel, User } from './user_model';
 import { trimInput, isEmail, isNotEmpty, isValidPassword, areValidPasswords } from '../configs/helpers';
 
-declare global {
-  namespace App.Accounts {
-    interface StateBase {
-      error: string;
-      info: string;
-      mutating: boolean;
-      profileData: string;
-      token: string;
-      user: User;
-      userId: string;
-      view: string;
-      loginEmail: Form.Field<string>;
-      loginPassword: Form.Field<string>;
-      registerPassword1: Form.Field<string>;
-      registerPassword2: Form.Field<string>;
-      registerName: Form.Field<string>;
-      profile: any;
-      registerProfile: any;
-      coldStart(verifyToken: string, profileData: string): void;
-      emailResetLink(email: string, callback?: Function): void;
-      init(): void;
-      logIn(): void;
-      logOut(): void;
-      mutate(): void;
-      resendVerification(email: string, callback?: Function): void;
-      setProfileData(profileData: string): void;
-      setView(view: string): void;
-      setToken(token: string): void;
-      setUser(user: Snapshot<User>): void;
-      setUserId(id: string): void;
-      showError(message: string): void;
-      showForgotPassword(): void;
-      showRegister(): void;
-      showResendVerification(): void;
-      showSignIn(): void;
-      signIn(email: string, password: string, profileData: string): void;
-      register(
-        name: string,
-        email: string,
-        password: string,
-        passwordConfirm: string,
-        profileData: string,
-        profile: Object,
-        callback?: any
-      ): void;
-      resetPassword(
-        token: string,
-        password: string,
-        passwordConfirm: string,
-        profileData: string,
-        callback?: Function
-      ): void;
-      resume(token: string, tokenExpiration: number, profileData: string): void;
-      verify(token: string, profileData: string): void;
-    }
-
-    interface State<T extends User> extends StateBase {
-      user: T;
-    }
-
-    export interface LoginData {
-      expires: number;
-      hashedToken: string;
-      user: User;
-    }
-  }
+export interface StateBase {
+  apolloError: string;
+  error: string;
+  info: string;
+  mutating: boolean;
+  profileData: string;
+  token: string;
+  user: User;
+  userId: string;
+  view: string;
+  loggingIn: boolean;
+  loginEmail: Form.Field<string>;
+  loginPassword: Form.Field<string>;
+  registerPassword1: Form.Field<string>;
+  registerPassword2: Form.Field<string>;
+  registerName: Form.Field<string>;
+  profile: any;
+  registerProfile: any;
+  coldStart(verifyToken: string, profileData: string): void;
+  emailResetLink(email: string, callback?: Function): void;
+  init(): void;
+  logIn(): void;
+  logOut(): void;
+  mutate(): void;
+  resendVerification(email: string, callback?: Function): void;
+  setProfileData(profileData: string): void;
+  setView(view: string): void;
+  setToken(token: string): void;
+  setUser(user: Snapshot<User>): void;
+  setUserId(id: string): void;
+  showError(message: string): void;
+  showInfo(message: string): void;
+  showForgotPassword(): void;
+  showRegister(): void;
+  showResendVerification(): void;
+  showSignIn(): void;
+  signIn(email: string, password: string, profileData: string): void;
+  register(
+    name: string,
+    email: string,
+    password: string,
+    passwordConfirm: string,
+    profileData: string,
+    profile: Object,
+    callback?: any
+  ): void;
+  resetPassword(
+    token: string,
+    password: string,
+    passwordConfirm: string,
+    profileData: string,
+    callback?: Function
+  ): void;
+  resume(token: string, tokenExpiration: number, profileData: string): void;
+  verify(token: string, profileData: string): void;
 }
 
-let mutation = apolloMutate;
+export interface State<T extends User> extends StateBase {
+  user: T;
+}
+
+export interface LoginData {
+  expires: number;
+  hashedToken: string;
+  user: User;
+}
 
 // import { IMutation } from 'apollo-mantra';
 
 export function createState<T extends User>(
   userModel: IModelType<typeof UserModel.SnapshotType, User>,
   profileModel: IModelType<typeof RegisterProfileModel.SnapshotType, RegisterProfile>
-): App.Accounts.State<T> {
+): State<T> {
   const AccountState = types.model(
     'AccountState',
     {
       loginEmail: Form.requiredField('', [Form.emailValidator]),
       loginPassword: Form.requiredField(''),
       registerPassword1: Form.requiredField('', [
-        Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`),
+        Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`)
       ]),
       registerPassword2: Form.requiredField('', [
         Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`)
@@ -101,6 +98,7 @@ export function createState<T extends User>(
       registerProfile: types.optional(profileModel, {}),
       view: 'signIn',
       error: '',
+      apolloError: '',
       info: '',
       token: '',
       userId: types.maybe(types.string),
@@ -126,9 +124,9 @@ export function createState<T extends User>(
       setUser(user: User) {
         this.user = user;
       },
-      showError(error: string) {
-        console.log('Done ...');
+      showError(error: string, apolloError?: string) {
         this.error = error;
+        this.apolloError = apolloError;
       },
 
       showInfo(info: string) {
@@ -162,8 +160,8 @@ export function createState<T extends User>(
           localStorage.removeItem('jwtToken');
           localStorage.removeItem('jwtTokenExpiration');
         }
-        this.loggingIn = false;
         this.user.logout();
+        this.loggingIn = false;
         this.view = 'signIn';
         this.error = '';
         this.info = '';
@@ -171,16 +169,25 @@ export function createState<T extends User>(
         this.userId = null;
       },
 
-      logIn(data: App.Accounts.LoginData): any {
+      logIn(data: LoginData): any {
         if (window && window.localStorage) {
           localStorage.setItem('jwtToken', data.hashedToken);
           localStorage.setItem('jwtTokenExpiration', data.expires.toString());
         }
+
+        this.view = 'loggedIn';
         this.user = data.user;
         this.userId = data.user._id;
-        this.view = 'loggedIn';
-        this.loggingIn = false;
+
         this.user.login(data);
+        this.changeLoggingIn(false);
+
+        // reset component
+        this.loginPassword.value = '';
+        this.registerName.value = '';
+        this.registerPassword1.value = '';
+        this.registerPassword2.value = '';
+        this.registerProfile = {} as any;
       },
 
       changeLoggingIn(loggingIn: boolean) {
@@ -198,7 +205,6 @@ export function createState<T extends User>(
         this.error = '';
         this.info = '';
       },
-
       showRegister() {
         this.view = 'register';
         this.error = '';
@@ -209,14 +215,12 @@ export function createState<T extends User>(
         this.error = '';
         this.info = '';
       },
-
       showResetPassword(token: string) {
         this.view = 'resetPassword';
         this.error = '';
         this.info = '';
         this.token = token;
       },
-
       clearErrors() {
         this.error = '';
         this.info = '';
@@ -260,20 +264,20 @@ export function createState<T extends User>(
         this.mutating = true;
         this.changeLoggingIn(true);
 
-        this.mutate({
+        return this.mutate({
           query: gql`mutation resume($token: String!) {
-      resume(token: $token) {
-        hashedToken
-        expires
-        user {
-          _id
-          profile {
-            ${profileData}
-          }
-          roles
-        }
-      }
-    }`,
+                      resume(token: $token) {
+                        hashedToken
+                        expires
+                        user {
+                          _id
+                          profile {
+                            ${profileData}
+                          }
+                          roles
+                        }
+                      }
+                    }`,
           variables: {
             token
           },
@@ -327,18 +331,18 @@ export function createState<T extends User>(
             }
           },
           catchCallback: error => {
-            console.log(error.message);
             if (error.graphQLErrors) {
               error = error.graphQLErrors[0] as any;
             }
 
             if (error.message.match(/Email not verified/)) {
-              this.showError(i18n`Your email is not verified`);
+              this.showError(i18n`Your email is not verified`, error.message);
             } else {
-              this.showError(i18n`User or password is invalid`);
+              this.showError(i18n`User or password is invalid`, error.message);
             }
           },
           thenCallback: (data: any) => {
+            // console.log(data);
             this.logIn(data.loginWithPassword);
           },
           finalCallback: () => {
@@ -347,16 +351,13 @@ export function createState<T extends User>(
         });
       },
 
-      resendVerification(email: string, callback?: Function) {
+      resendVerification(email: string) {
         if (!isNotEmpty(this, email) || !isEmail(this, email)) {
-          if (callback) {
-            callback();
-          }
           return;
         }
 
         this.mutating = true;
-        this.mutate({
+        return this.mutate({
           query: gql`
             mutation requestResendVerification($email: String!) {
               requestResendVerification(email: $email)
@@ -371,18 +372,12 @@ export function createState<T extends User>(
             } else if (err.message.match(/User already verified/)) {
               this.showError(i18n`This user is already verified`);
             } else {
-              console.error(err);
+              // console.error(err);
               this.showError(i18n`Server error`);
-            }
-            if (callback) {
-              callback();
             }
           },
           thenCallback: (_data: any) => {
             this.showInfo(i18n`We sent you instructions on how to verify your email`);
-            if (callback) {
-              callback();
-            }
           },
           finalCallback: () => {
             this.mutating = false;
@@ -390,16 +385,13 @@ export function createState<T extends User>(
         });
       },
 
-      emailResetLink(email: string, callback?: Function) {
+      emailResetLink(email: string) {
         if (!isNotEmpty(this, email) || !isEmail(this, email)) {
-          if (callback) {
-            callback();
-          }
           return;
         }
 
         this.mutating = true;
-        this.mutate({
+        return this.mutate({
           query: gql`
             mutation requestResetPassword($email: String!) {
               requestResetPassword(email: $email)
@@ -416,18 +408,12 @@ export function createState<T extends User>(
             if (error.message.match(/User email does not exist/)) {
               this.showError(i18n`User with this email does not exist!`);
             } else {
-              console.error(error);
+              // console.error(error);
               this.showError(i18n`Server error`);
-            }
-            if (callback) {
-              callback();
             }
           },
           thenCallback: (_data: any) => {
             this.showInfo(i18n`We sent you an email with password reset instructions`);
-            if (callback) {
-              callback();
-            }
           },
           finalCallback: () => {
             this.mutating = false;
@@ -435,32 +421,26 @@ export function createState<T extends User>(
         });
       },
 
-      resetPassword(
-        token: string,
-        password: string,
-        passwordConfirm: string,
-        profileData: string,
-        callback?: Function
-      ): void {
+      resetPassword(token: string, password: string, passwordConfirm: string, profileData: string) {
         if (!isNotEmpty(this, password) || !areValidPasswords(this, password, passwordConfirm)) {
           return;
         }
 
         this.mutating = true;
-        this.mutate({
+        return this.mutate({
           query: gql`mutation resetPassword($token: String!, $password: String!) {
-      resetPassword(token: $token, password: $password) {
-        hashedToken
-        expires
-        user {
-          _id
-          profile {
-            ${profileData}
-          }
-          roles
-        }
-      }
-    }`,
+                      resetPassword(token: $token, password: $password) {
+                        hashedToken
+                        expires
+                        user {
+                          _id
+                          profile {
+                            ${profileData}
+                          }
+                          roles
+                        }
+                      }
+                    }`,
           variables: {
             token,
             password
@@ -493,16 +473,13 @@ export function createState<T extends User>(
           },
           finalCallback: () => {
             this.mutating = false;
-            if (callback) {
-              callback();
-            }
           }
         });
       },
 
-      verify(token: string, profileData: string): void {
+      verify(token: string, profileData: string) {
         this.mutating = true;
-        this.mutate({
+        return this.mutate({
           query: gql`mutation verify($token: String!) {
       verify(token: $token) {
         hashedToken
@@ -556,8 +533,7 @@ export function createState<T extends User>(
         password: string,
         passwordConfirm: string,
         profileData: string,
-        profile: Object = {},
-        callback?: any
+        profile: Object = {}
       ) {
         let user = {
           email: email,
@@ -567,7 +543,7 @@ export function createState<T extends User>(
             ...profile
           }
         };
-
+        this.error = '';
         if (
           !isNotEmpty(this, name) ||
           !isNotEmpty(this, email) ||
@@ -575,35 +551,35 @@ export function createState<T extends User>(
           !isEmail(this, email) ||
           !areValidPasswords(this, password, passwordConfirm)
         ) {
-          if (callback) {
-            callback();
-          }
           return;
         }
 
         this.mutating = true;
-        this.mutate({
+        return this.mutate({
           query: gql`mutation createAccountAndLogin($user: UserPasswordInput!) {
-      createAccountAndLogin(user: $user) {
-        hashedToken
-        expires
-        user {
-          _id
-          profile {
-            ${profileData}
-          }
-          roles
-        }
-      }
-    }`,
+                      createAccountAndLogin(user: $user) {
+                        hashedToken
+                        expires
+                        user {
+                          _id
+                          profile {
+                            ${profileData}
+                          }
+                          roles
+                        }
+                      }
+                    }`,
           variables: {
             user,
             password
           },
           catchCallback: error => {
+            // console.log(error.message);
+
             if (error.graphQLErrors) {
               error = error.graphQLErrors[0] as any;
             }
+
             if (error.message.match(/Email not verified!/)) {
               this.showInfo(
                 i18n`Account successfully created! We sent you an email with instructions on how to activate your account.`
@@ -617,18 +593,12 @@ export function createState<T extends User>(
             } else {
               this.showError(error.message);
             }
-            if (callback) {
-              callback();
-            }
           },
           thenCallback: (data: any) => {
             this.logIn(data.createAccountAndLogin);
-            if (callback) {
-              callback();
-            }
           },
           finalCallback: () => {
-            this.mutating = false;
+            this.setMutating(false);
           }
         });
       }
@@ -642,9 +612,9 @@ let state: any;
 
 export function getAccountState<T extends User>(
   { userType = UserModel as any, profileType = types.optional(RegisterProfileModel, {}) as any, cache = true } = {}
-): App.Accounts.State<T> {
+): State<T> {
   if (!cache || !state) {
-    state = createState(userType as any, profileType as any);
+    state = createState(userType, profileType);
   }
   return state;
   // return createState(userType as any);

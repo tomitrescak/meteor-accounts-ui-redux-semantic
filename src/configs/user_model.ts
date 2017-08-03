@@ -35,7 +35,7 @@ export const UserModel = types.model(
   {
     _id: '',
     profile: types.optional(UserProfileModel, {}),
-    emails: types.array(UserEmail),
+    emails: types.maybe(types.array(UserEmail)),
     roles: types.array(types.string)
   },
   {

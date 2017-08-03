@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import { mount } from 'enzyme';
 
 import { User } from '../../configs/user_model';
-import { getAccountState, AccountsView } from '../../index';
+import { getAccountState, AccountsView, State } from '../../index';
 import { create } from './test_data';
 import { Segment } from 'semantic-ui-react';
 
@@ -45,7 +45,7 @@ describe('SendVerificationTest', () => {
 
   it('Calls "logOut" when clicked on the button', function() {
     const wrapper = mount(data.component);
-    const state = wrapper.prop<App.Accounts.State<User>>('state');
+    const state = wrapper.prop<State<User>>('state');
 
     wrapper.find('input[name="email"]').change(create.testEmail);
     wrapper.find('button[type="submit"]').simulate('submit');

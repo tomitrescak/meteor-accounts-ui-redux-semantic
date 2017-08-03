@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 
 import { UserView } from '../logged_user_view';
 import { User } from '../../configs/user_model';
-import { getAccountState } from '../../index';
+import { getAccountState, State } from '../../index';
 import { Menu, Dropdown } from 'semantic-ui-react';
 
 describe('LoggedViewTest', () => {
@@ -28,7 +28,7 @@ describe('LoggedViewTest', () => {
       });
     },
     componentWithState(
-      modifyState: (state: App.Accounts.State<User>) => App.Accounts.State<User> = state => state,
+      modifyState: (state: State<User>) => State<User> = state => state,
       dropdownItems: any = undefined
     ) {
       const state = modifyState(getAccountState({ cache: false }));
@@ -87,15 +87,10 @@ describe('LoggedViewTest', () => {
     wrapper.should.matchSnapshot();
   });
 
-  it('Renders with default state', function() {
-    const wrapper = mount(<Menu><UserView /></Menu>);
-    wrapper.should.matchSnapshot();
-  });
-
   it('Calls "logOut" when clicked on the button', function() {
     const wrapper = mount(data.component);
     const userView = wrapper.find('UserView');
-    const state: App.Accounts.State<User> = userView.prop('state') as any;
+    const state: State<User> = userView.prop('state') as any;
 
     wrapper.find('DropdownItem').at(0).simulate('click');
 

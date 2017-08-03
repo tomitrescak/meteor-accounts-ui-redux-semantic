@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AccountsRoot } from '../accounts_root_view';
 import { mount } from 'enzyme';
 import * as sinon from 'sinon';
-import { getAccountState, AccountsView } from '../../index';
+import { getAccountState, AccountsView, State } from '../../index';
 import { User } from '../../configs/user_model';
 import { create } from './test_data';
 import { Segment } from 'semantic-ui-react';
@@ -74,7 +74,7 @@ describe('AccountsViewTest', () => {
 
   it('Calls "Sign In" when clicked on the button', function() {
     const wrapper = mount(data.component);
-    const state: App.Accounts.State<User> = wrapper.prop('state') as any;
+    const state: State<User> = wrapper.prop('state') as any;
     const saveStub = sinon.stub(state, 'signIn');
 
     wrapper.find('input[name="email"]').change(create.testEmail);

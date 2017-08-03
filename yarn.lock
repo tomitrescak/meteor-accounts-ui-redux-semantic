@@ -224,9 +224,9 @@ apollo-link@^0.0.3:
     "@types/graphql" "^0.9.4"
     "@types/zen-observable" "^0.5.1"
 
-apollo-mantra@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/apollo-mantra/-/apollo-mantra-1.6.0.tgz#75bcd753a4f7c7029621a3a5fef09984f9b2bb7e"
+apollo-mantra:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/apollo-mantra/-/apollo-mantra-1.6.1.tgz#d7eadbc20c4d78db08d03dccc54b8650a7a9b827"
 
 apollo-module-authentication@1.2.0:
   version "1.2.0"

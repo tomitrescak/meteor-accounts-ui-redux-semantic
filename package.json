@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "mocha --require ./mocha.js --ui snapshots --report lcovonly src/**/*.test.tsx --compilers ts:ts-node/register",
+    "testjs": "mocha --require ./mocha.js --ui snapshots --report lcovonly dist/**/*.test.js",
     "test_fuse": "node fuse test",
     "coverage": "NODE_ENV=test nyc npm test && nyc report --reporter=lcov",
     "luis": "node fuse luis",
@@ -56,7 +57,7 @@
     "wafl": "0.x.x"
   },
   "dependencies": {
-    "apollo-mantra": "^1.6.0",
+    "apollo-mantra": "^1.6.1",
     "apollo-module-authentication": "1.2.0",
     "chai-match-snapshot": "^1.0.12",
     "luis": "1.2.18",

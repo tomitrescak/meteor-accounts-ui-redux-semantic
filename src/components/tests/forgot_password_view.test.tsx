@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import * as sinon from 'sinon';
 import { User } from '../../configs/user_model';
 import { create } from './test_data';
-import { getAccountState } from '../../index';
+import { getAccountState, State } from '../../index';
 import { Segment } from 'semantic-ui-react';
 
 describe('ForgotPasswordViewTest', () => {
@@ -49,7 +49,7 @@ describe('ForgotPasswordViewTest', () => {
 
   it('Calls "emailResetLink" when clicked on the button', function() {
     const wrapper = mount(data.component);
-    const state: App.Accounts.State<User> = wrapper.prop('state') as any;
+    const state: State<User> = wrapper.prop('state') as any;
     const saveStub = sinon.stub(state, 'emailResetLink');
 
     wrapper.find('input[name="email"]').change(create.testEmail);

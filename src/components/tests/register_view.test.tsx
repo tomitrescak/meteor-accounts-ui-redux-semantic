@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { mount, ReactWrapper } from 'enzyme';
 import * as sinon from 'sinon';
+import * as Form from 'semantic-ui-mobx';
+
+import { mount, ReactWrapper } from 'enzyme';
 import { create } from './test_data';
 import { AccountsRoot } from '../accounts_root_view';
-import { getAccountState } from '../../index';
-import * as Form from 'semantic-ui-mobx';
+import { getAccountState, State } from '../../index';
+
 import { User, UserModel } from '../../configs/user_model';
-import { types } from 'mobx-state-tree';
 import { Segment } from 'semantic-ui-react';
+import { types } from 'mobx-state-tree';
+import { registerProfileModel } from '../../tests/tests_shared';
 
 const profileModel = types.model('Profile', {
   organisation: types.maybe(types.string),
@@ -17,18 +20,6 @@ const profileModel = types.model('Profile', {
     return {
       organisation: this.organisation,
       interest: this.interest
-    }
-  }
-});
-
-const registerProfileModel = types.model('Profile', {
-  organisation: Form.requiredField(''),
-  interest: Form.simpleField('')
-}, {
-  json(): any {
-    return {
-      organisation: this.organisation.value,
-      interest: this.interest.value
     }
   }
 });
@@ -127,7 +118,7 @@ describe('AccountsRegisterTest', () => {
   it('detects incorrect profile', function() {
     const state = getAccountState({ cache: false, userType: userModel, profileType: invalidProfileModel });
     state.setView('register');
-    console.log(state.registerProfile)
+    // console.log(state.registerProfile)
     const wrapper = mount(<Segment inverted><AccountsRoot state={state} extraFields={() => null} inverted={true} /></Segment>);
 
     (() => wrapper.find('form').simulate('submit')).should.throw('You need to implement json() and parse() functions in user and profile!');
@@ -135,7 +126,7 @@ describe('AccountsRegisterTest', () => {
 
   it('calls registration function', function() {
     const wrapper = mount(data.component);
-    const state: App.Accounts.State<User> = wrapper.prop('state') as any;
+    const state: State<User> = wrapper.prop('state') as any;
     const registerStub = sinon.stub(state, 'register');
 
     fill(wrapper);
@@ -157,7 +148,7 @@ describe('AccountsRegisterTest', () => {
 
   it('shows error messages', function() {
     const wrapper = mount(data.component);
-    const state = wrapper.prop<App.Accounts.State<User>>('state');
+    const state = wrapper.prop<State<User>>('state');
     sinon.stub(state, 'mutate');
 
     // missing name

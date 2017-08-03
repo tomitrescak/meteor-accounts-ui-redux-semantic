@@ -3,9 +3,10 @@ import * as sinon from 'sinon';
 import { mount } from 'enzyme';
 
 import { User } from '../../configs/user_model';
-import { getAccountState, AccountsView } from '../../index';
+import { getAccountState, AccountsView, State } from '../../index';
 import { create } from './test_data';
 import { Segment } from 'semantic-ui-react';
+import { AccountsRoot } from '../accounts_root_view';
 
 const token = 'token1';
 
@@ -25,7 +26,7 @@ describe('ResetPasswordViewTest', () => {
       state.setToken(token);
       sinon.spy(state, 'resetPassword');
       sinon.stub(state, 'mutate').callsFake(() => {});
-      return <AccountsView state={state} extraFields={() => null} />;
+      return <AccountsRoot state={state} extraFields={() => null} />;
     }
   };
 
@@ -64,7 +65,7 @@ describe('ResetPasswordViewTest', () => {
 
   it('Calls "resetPassword" when clicked on the button', function() {
     const wrapper = mount(data.component);
-    const state = wrapper.prop<App.Accounts.State<User>>('state');
+    const state = wrapper.prop<State<User>>('state');
 
     wrapper.find('input[name="password1"]').change(create.testPassword);
     wrapper.find('input[name="password2"]').change(create.testPassword);

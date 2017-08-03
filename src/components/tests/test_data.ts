@@ -1,5 +1,18 @@
 export const create = {
   testName: 'Luke Skywalker',
   testEmail: 'luke@skywalker.com',
-  testPassword: 'password'
-}
+  testPassword: 'password',
+  testProfileData: `name\norganisation`,
+  testProfile: {
+    organisation: 'WSU'
+  },
+  user: () => ({
+    _id: '1',
+    roles: ['role'],
+    emails: [{ address: 'luke@skywalker.com', verified: true}],
+    profile: {
+      name: 'Luke Skywalker',
+      organisation: 'WSU'
+    }
+  })
+};

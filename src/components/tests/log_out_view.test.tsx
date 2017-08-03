@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 
 import { LogOutView } from '../log_out_view';
 import { User } from '../../configs/user_model';
-import { getAccountState } from '../../index';
+import { getAccountState, State } from '../../index';
 
 describe('LogOutViewTest', () => {
   const data = {
@@ -34,7 +34,7 @@ describe('LogOutViewTest', () => {
 
   it('Calls "logOut" when clicked on the button', function() {
     const wrapper = mount(data.component);
-    const state: App.Accounts.State<User> = wrapper.prop('state') as any;
+    const state: State<User> = wrapper.prop('state') as any;
 
     wrapper.find('button').simulate('click');
 

@@ -27,7 +27,7 @@ export default class SignUp extends React.PureComponent<IRegistrationComponent, 
       return;
     }
 
-    console.log(currentState.registerProfile);
+    // console.log(currentState.registerProfile);
 
     this.props.state.register(
       currentState.registerName.value,
