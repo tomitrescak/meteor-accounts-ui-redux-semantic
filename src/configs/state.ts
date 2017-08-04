@@ -35,6 +35,7 @@ export interface StateBase {
   logOut(): void;
   mutate(): void;
   resendVerification(email: string, callback?: Function): void;
+  setProfile(profile: any): void;
   setProfileData(profileData: string): void;
   setView(view: string): void;
   setToken(token: string): void;
@@ -128,7 +129,9 @@ export function createState<T extends User>(
         this.error = error;
         this.apolloError = apolloError;
       },
-
+      setProfile(profile: any) {
+        this.user.profile = profile;
+      },
       showInfo(info: string) {
         this.info = info;
       },
@@ -165,7 +168,7 @@ export function createState<T extends User>(
         this.view = 'signIn';
         this.error = '';
         this.info = '';
-        this.user = null;
+        this.setUser(null);
         this.userId = null;
       },
 
@@ -176,7 +179,7 @@ export function createState<T extends User>(
         }
 
         this.view = 'loggedIn';
-        this.user = data.user;
+        this.setUser(data.user);
         this.userId = data.user._id;
 
         this.user.login(data);

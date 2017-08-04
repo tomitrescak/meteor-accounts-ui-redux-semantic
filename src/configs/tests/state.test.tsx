@@ -34,11 +34,11 @@ let typeDefs = addedSchema + modules.schema; // .replace(/Date/g, 'Int');
 
 const resolvers = {
   Date: {
-    __parseValue (value: string) {
+    __parseValue(value: string) {
       return value != null ? new Date(value) : undefined;
     },
-    __parseLiteral (ast: any) {
-      return (parseInt(ast.value, 10));
+    __parseLiteral(ast: any) {
+      return parseInt(ast.value, 10);
     },
     __serialize(value: Date) {
       return value instanceof Date ? value.getTime() : value;
@@ -54,8 +54,6 @@ const defaultToken = {
   user: {},
   hashedToken: '#hash'
 };
-
-
 
 function initApollo({ token = defaultToken, user = create.user(), mutation = {} } = {}) {
   // define mocks
@@ -195,13 +193,10 @@ describe('State', () => {
       } catch (ex) {
         /**/
       }
-
       state.userId.should.equal(user._id);
       state.user._id.should.equal(user._id);
       state.user.profile.name.should.equal(user.profile.name);
       state.loginPassword.value.should.be.empty;
-
-      console.log(localStorage.getItem('jwtTokenExpiration'))
 
       localStorage.getItem('jwtToken').should.equal(defaultToken.hashedToken);
       localStorage.getItem('jwtTokenExpiration').should.equal(defaultToken.expires.getTime().toString());
@@ -400,6 +395,10 @@ describe('State', () => {
   });
 
   async function checkMutationAndLogin(func: () => void) {
+    let location = {
+      href: ''
+    };
+
     const locationStub = sinon.stub(global, 'location').get(() => location);
     const originalPushState = global.history.pushState;
     const pushStateStub = sinon.stub(global.history, 'pushState');
@@ -408,13 +407,7 @@ describe('State', () => {
       const logInSpy = sinon.spy(state, 'logIn');
       initApollo();
 
-      let location = {
-        href: ''
-      };
-      
       global.location.href = 'http://test?token';
-
-      
 
       // check that user is not logged in
       should.not.exist(state.userId);
@@ -435,8 +428,6 @@ describe('State', () => {
       await func();
 
       global.location.href.should.equal('http://test');
-
-      
     } catch (ex) {
       throw ex;
     } finally {
@@ -720,6 +711,14 @@ describe('State', () => {
       should.not.exist(state.user);
       state.view.should.equal('signIn');
       logoutSpy.should.have.been.called;
+    });
+  });
+
+  describe ('setProfile', function() {
+    it('replaces current users profile', function() {
+       state.setUser({ roles: [] });
+       state.setProfile({ name: create.testName, error: 1 });
+       state.user.profile.name.should.equal(create.testName);
     });
   });
 });

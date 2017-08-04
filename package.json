@@ -1,6 +1,6 @@
 {
   "name": "apollo-authentication-semantic-ui",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "UI for apollo authentication",
   "main": "./dist/index.js",
   "scripts": {

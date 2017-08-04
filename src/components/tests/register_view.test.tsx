@@ -13,6 +13,7 @@ import { types } from 'mobx-state-tree';
 import { registerProfileModel } from '../../tests/tests_shared';
 
 const profileModel = types.model('Profile', {
+  name: types.maybe(types.string),
   organisation: types.maybe(types.string),
   interest: types.maybe(types.string)
 }, {
@@ -181,6 +182,15 @@ describe('AccountsRegisterTest', () => {
     wrapper.findWhere(w => w.prop('content') === 'Sign In').simulate('click');
     wrapper.should.matchSnapshot();
   });
+
+  xit('Self initialises registerProfile model', function() {
+    const state = data.state;
+
+    state.setUser({ roles: [], profile: { name: 'Tomas' } });
+
+    state.user.profile.name.should.equal('Tomas');
+    state.registerProfile.name.value.should.equal('Tomas');
+  })
 });
 
 export const AccountsRegisterTest = global.fuseExport;
