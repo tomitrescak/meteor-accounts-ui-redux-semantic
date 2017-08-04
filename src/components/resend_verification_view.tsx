@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Form from 'semantic-ui-mobx';
+import * as Form from '../configs/form';
 
 import i18n from 'es2015-i18n-tag';
 import { Grid, Button, Divider } from 'semantic-ui-react';
@@ -12,7 +12,7 @@ export class ResendVerification extends React.PureComponent<ISimpleComponent, {}
 
   emailVerification = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    this.props.state.resendVerification(this.props.state.loginEmail.value);
+    this.props.state.resendVerification(this.props.state.loginEmail);
   };
 
   showSignIn = () => {
@@ -32,7 +32,7 @@ export class ResendVerification extends React.PureComponent<ISimpleComponent, {}
           placeholder={i18n`Email Address`}
           name="email"
           icon="mail"
-          owner={this.props.state.loginEmail}
+          owner={Form.requiredField(this.props.state, 'loginEmail', Form.emailValidator)}
         />
         <Grid centered className="equal width">
           <Grid.Row>

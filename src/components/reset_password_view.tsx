@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Form from 'semantic-ui-mobx';
+import * as Form from '../configs/form';
 
 import i18n from 'es2015-i18n-tag';
 import { Grid, Button, Divider } from 'semantic-ui-react';
@@ -16,14 +16,14 @@ export default class ResetPassword extends React.PureComponent<IComponent, {}> {
     const currentState = this.props.state;
     e.preventDefault();
 
-    if (!currentState.registerPassword1.isValid() || !currentState.registerPassword2.isValid()) {
+    if (!Form.isValid(currentState, 'registerPassword1') || !Form.isValid(currentState, 'registerPassword2')) {
       return;
     }
 
     this.props.state.resetPassword(
       this.props.token,
-      currentState.registerPassword1.value,
-      currentState.registerPassword2.value,
+      currentState.registerPassword1,
+      currentState.registerPassword2,
       currentState.profileData
     );
   };
@@ -41,14 +41,14 @@ export default class ResetPassword extends React.PureComponent<IComponent, {}> {
           label={i18n`Password`}
           placeholder={i18n`Password`}
           name="password1"
-          owner={state.registerPassword1}
+          owner={Form.requiredField(state, 'registerPassword1', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
         />
         <Form.Input
           type="password"
           label={i18n`Password again`}
           placeholder={i18n`Password`}
           name="password2"
-          owner={state.registerPassword2}
+          owner={Form.requiredField(state, 'registerPassword2', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
         />
 
         <Grid centered className="equal width">

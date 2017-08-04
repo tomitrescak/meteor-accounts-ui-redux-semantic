@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as sinon from 'sinon';
-import * as Form from 'semantic-ui-mobx';
+import * as Form from '../../configs/form';
 
 import { mount, ReactWrapper } from 'enzyme';
 import { create } from './test_data';
@@ -73,7 +73,7 @@ describe('AccountsRegisterTest', () => {
               key="organisation"
               label="Organisation"
               placeholder="Your home organisation"
-              owner={profile.organisation}
+              owner={Form.requiredField(profile, 'organisation')}
               name="organisation"
             />,
             <Form.Input
@@ -81,7 +81,7 @@ describe('AccountsRegisterTest', () => {
               name="interest"
               label="Interest"
               placeholder="Your interest"
-              owner={profile.interest}
+              owner={Form.bind(profile, 'interest')}
               icon="lock"
             />
           ]}}
@@ -112,6 +112,8 @@ describe('AccountsRegisterTest', () => {
     const state = data.state;
     state.setView('register');
     const wrapper = mount(<Segment inverted><AccountsRoot state={state} extraFields={() => null} inverted={true} /></Segment>);
+
+    
 
     wrapper.should.matchSnapshot();
   });
@@ -183,13 +185,12 @@ describe('AccountsRegisterTest', () => {
     wrapper.should.matchSnapshot();
   });
 
-  xit('Self initialises registerProfile model', function() {
+  it('Self initialises registerProfile model', function() {
     const state = data.state;
 
     state.setUser({ roles: [], profile: { name: 'Tomas' } });
 
     state.user.profile.name.should.equal('Tomas');
-    state.registerProfile.name.value.should.equal('Tomas');
   })
 });
 

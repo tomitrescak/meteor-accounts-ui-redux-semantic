@@ -5,7 +5,7 @@ import { Grid, Button, Divider } from 'semantic-ui-react';
 import { observer } from 'mobx-react';
 import { IRegistrationComponent } from './shared';
 
-import * as Form from 'semantic-ui-mobx';
+import * as Form from '../configs/form';
 
 @observer
 export default class SignUp extends React.PureComponent<IRegistrationComponent, {}> {
@@ -19,10 +19,10 @@ export default class SignUp extends React.PureComponent<IRegistrationComponent, 
     }
 
     if (
-      !currentState.loginEmail.isValid() ||
-      !currentState.registerName.isValid() ||
-      !currentState.registerPassword1.isValid() ||
-      !currentState.registerPassword2.isValid()
+      !Form.isValid(currentState, 'loginEmail') ||
+      !Form.isValid(currentState, 'registerName') ||
+      !Form.isValid(currentState, 'registerPassword1') ||
+      !Form.isValid(currentState, 'registerPassword2')
     ) {
       return;
     }
@@ -30,10 +30,10 @@ export default class SignUp extends React.PureComponent<IRegistrationComponent, 
     // console.log(currentState.registerProfile);
 
     this.props.state.register(
-      currentState.registerName.value,
-      currentState.loginEmail.value.toLowerCase(),
-      currentState.registerPassword1.value,
-      currentState.registerPassword2.value,
+      currentState.registerName,
+      currentState.loginEmail.toLowerCase(),
+      currentState.registerPassword1,
+      currentState.registerPassword2,
       currentState.profileData,
       currentState.registerProfile.json()
     );
@@ -49,28 +49,28 @@ export default class SignUp extends React.PureComponent<IRegistrationComponent, 
           placeholder={i18n`Your full name`}
           name="name"
           icon="user"
-          owner={currentState.registerName}
+          owner={Form.requiredField(currentState, 'registerName')}
         />
         <Form.Input
           icon="mail"
           label={i18n`Email`}
           placeholder={i18n`Email Address`}
           name="email"
-          owner={currentState.loginEmail}
+          owner={Form.requiredField(currentState, 'loginEmail', Form.emailValidator)}
         />
         <Form.Input
           type="password"
           label={i18n`Password`}
           placeholder={i18n`Password`}
           name="password1"
-          owner={currentState.registerPassword1}
+          owner={Form.requiredField(currentState, 'registerPassword1', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
         />
         <Form.Input
           type="password"
           label={i18n`Password again`}
           placeholder={i18n`Password`}
           name="password2"
-          owner={currentState.registerPassword2}
+          owner={Form.requiredField(currentState, 'registerPassword2', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
         />
 
         {this.props.extraFields(currentState.registerProfile)}

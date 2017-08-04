@@ -186,7 +186,7 @@ describe('State', () => {
 
       initApollo();
 
-      state.loginPassword.onChange('MyPassword');
+      state.changeField('loginPassword', 'MyPassword');
 
       try {
         const result = await state.signIn('email@email.com', 'password', 'name');
@@ -196,7 +196,7 @@ describe('State', () => {
       state.userId.should.equal(user._id);
       state.user._id.should.equal(user._id);
       state.user.profile.name.should.equal(user.profile.name);
-      state.loginPassword.value.should.be.empty;
+      state.loginPassword.should.be.empty;
 
       localStorage.getItem('jwtToken').should.equal(defaultToken.hashedToken);
       localStorage.getItem('jwtTokenExpiration').should.equal(defaultToken.expires.getTime().toString());
@@ -326,11 +326,11 @@ describe('State', () => {
         }
       }
 
-      state.loginPassword.onChange('MyPassword');
-      state.registerName.onChange(create.testName);
-      state.registerPassword1.onChange(create.testPassword);
-      state.registerPassword2.onChange(create.testPassword);
-      state.registerProfile.organisation.onChange('WSU');
+      state.changeField('loginPassword', 'MyPassword');
+      state.changeField('registerName', create.testName);
+      state.changeField('registerPassword1', create.testPassword);
+      state.changeField('registerPassword2', create.testPassword);
+      state.registerProfile.changeField('organisation', 'WSU');
 
       await testServerMessage('Email not verified!');
       infoSpy.should.have.been.called;
@@ -350,12 +350,12 @@ describe('State', () => {
       await testServerMessage('Pikachu');
       state.error.should.equal('Pikachu');
 
-      state.loginPassword.value.should.not.be.empty;
-      state.loginPassword.value.should.not.be.empty;
-      state.registerName.value.should.not.be.empty;
-      state.registerPassword1.value.should.not.be.empty;
-      state.registerPassword2.value.should.not.be.empty;
-      state.registerProfile.organisation.value.should.not.be.empty;
+      state.loginPassword.should.not.be.empty;
+      state.loginPassword.should.not.be.empty;
+      state.registerName.should.not.be.empty;
+      state.registerPassword1.should.not.be.empty;
+      state.registerPassword2.should.not.be.empty;
+      state.registerProfile.organisation.should.not.be.empty;
     });
 
     it('logs in after successful registration, remove password and remove registration data', async function() {
@@ -363,11 +363,11 @@ describe('State', () => {
 
       initApollo();
 
-      state.loginPassword.onChange('MyPassword');
-      state.registerName.onChange(create.testName);
-      state.registerPassword1.onChange(create.testPassword);
-      state.registerPassword2.onChange(create.testPassword);
-      state.registerProfile.organisation.onChange('WSU');
+      state.changeField('loginPassword', 'MyPassword');
+      state.changeField('registerName', create.testName);
+      state.changeField('registerPassword1', create.testPassword);
+      state.changeField('registerPassword2', create.testPassword);
+      state.registerProfile.changeField('organisation', 'WSU');
 
       await state.register(
         create.testName,
@@ -384,11 +384,11 @@ describe('State', () => {
 
       // check if component has reset its values
       state.error.should.be.empty;
-      state.loginPassword.value.should.be.empty;
-      state.registerName.value.should.be.empty;
-      state.registerPassword1.value.should.be.empty;
-      state.registerPassword2.value.should.be.empty;
-      state.registerProfile.organisation.value.should.be.empty;
+      state.loginPassword.should.be.empty;
+      state.registerName.should.be.empty;
+      state.registerPassword1.should.be.empty;
+      state.registerPassword2.should.be.empty;
+      state.registerProfile.organisation.should.be.empty;
       state.loggingIn.should.be.false;
       errorSpy.should.not.have.been.called;
     });

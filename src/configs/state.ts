@@ -1,4 +1,4 @@
-import * as Form from 'semantic-ui-mobx';
+
 // tslint:disable-next-line:no-unused-variable
 import { types, IModelType, ISnapshottable, IType } from 'mobx-state-tree';
 // tslint:disable-next-line:no-unused-variable
@@ -9,6 +9,7 @@ import { mutate as apolloMutate } from 'apollo-mantra';
 import { Snapshot } from 'mobx-state-tree/dist/types/complex-types/object';
 import { UserModel, RegisterProfile, RegisterProfileModel, User } from './user_model';
 import { trimInput, isEmail, isNotEmpty, isValidPassword, areValidPasswords } from '../configs/helpers';
+import * as Form from './form';
 
 export interface StateBase {
   apolloError: string;
@@ -21,13 +22,14 @@ export interface StateBase {
   userId: string;
   view: string;
   loggingIn: boolean;
-  loginEmail: Form.Field<string>;
-  loginPassword: Form.Field<string>;
-  registerPassword1: Form.Field<string>;
-  registerPassword2: Form.Field<string>;
-  registerName: Form.Field<string>;
+  loginEmail: string;
+  loginPassword: string;
+  registerPassword1: string;
+  registerPassword2: string;
+  registerName: string;
   profile: any;
   registerProfile: any;
+  changeField(key: string, value: any): void;
   coldStart(verifyToken: string, profileData: string): void;
   emailResetLink(email: string, callback?: Function): void;
   init(): void;
@@ -87,15 +89,11 @@ export function createState<T extends User>(
   const AccountState = types.model(
     'AccountState',
     {
-      loginEmail: Form.requiredField('', [Form.emailValidator]),
-      loginPassword: Form.requiredField(''),
-      registerPassword1: Form.requiredField('', [
-        Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`)
-      ]),
-      registerPassword2: Form.requiredField('', [
-        Form.lengthValidator(7, i18n`Password needs to have at least 7 characters`)
-      ]),
-      registerName: Form.requiredField(''),
+      loginEmail: '',
+      loginPassword: '',
+      registerPassword1: '',
+      registerPassword2: '',
+      registerName: '',
       registerProfile: types.optional(profileModel, {}),
       view: 'signIn',
       error: '',
@@ -110,6 +108,9 @@ export function createState<T extends User>(
     },
     {
       mutate: apolloMutate,
+      // changeField(key: string, value: any) {
+      //   this[key] = value;
+      // },
       setView(view: string) {
         this.view = view;
       },
@@ -186,10 +187,10 @@ export function createState<T extends User>(
         this.changeLoggingIn(false);
 
         // reset component
-        this.loginPassword.value = '';
-        this.registerName.value = '';
-        this.registerPassword1.value = '';
-        this.registerPassword2.value = '';
+        this.loginPassword = '';
+        this.registerName = '';
+        this.registerPassword1 = '';
+        this.registerPassword2 = '';
         this.registerProfile = {} as any;
       },
 
@@ -605,7 +606,15 @@ export function createState<T extends User>(
     }
   );
 
-  return AccountState.create({ user: null, userId: null }) as any;
+  const ComposedState = Form.createFormStateFromModel('Accounts', AccountState);
+  return ComposedState.create({ user: null, userId: null }) as any;
+
+  // // const ComposedState1 = Form.createFormState1('Accounts', { mimo: 1, bar: '' }, { foo() { }});
+  // const g = ComposedState.create();
+  // // g.mimo = 1;
+  // g.changeField('mimo', 13);
+  // console.log(g.mimo);
+  // return AccountState.create({ user: null, userId: null }) as any;
 }
 
 let state: any;

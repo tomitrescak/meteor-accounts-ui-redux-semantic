@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Form from 'semantic-ui-mobx';
+import * as Form from '../configs/form';
 
 import i18n from 'es2015-i18n-tag';
 import { Grid, Button, Divider } from 'semantic-ui-react';
@@ -12,7 +12,7 @@ export default class ForgotPassword extends React.PureComponent<ISimpleComponent
 
   emailResetLink = (e: any) => {
     e.preventDefault();
-    this.props.state.emailResetLink(this.props.state.loginEmail.value);
+    this.props.state.emailResetLink(this.props.state.loginEmail);
   };
 
   render() {
@@ -24,7 +24,7 @@ export default class ForgotPassword extends React.PureComponent<ISimpleComponent
           label={i18n`Email`}
           placeholder={i18n`Email Address`}
           name="email"
-          owner={this.props.state.loginEmail}
+          owner={Form.bind(this.props.state, 'loginEmail')}
         />
         <Grid centered className="equal width">
           <Grid.Row>

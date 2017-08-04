@@ -1,7 +1,7 @@
 import * as React from 'react';
 import i18n from 'es2015-i18n-tag';
 import { Grid, Button, Divider } from 'semantic-ui-react';
-import * as Form from 'semantic-ui-mobx';
+import * as Form from '../configs/form';
 
 import { observer } from 'mobx-react';
 import { ISimpleComponent } from './shared';
@@ -32,7 +32,7 @@ export default class SignIn extends React.Component<ISimpleComponent, {}> {
     const state = this.props.state;
     e.preventDefault();
 
-    this.props.state.signIn(state.loginEmail.value, state.loginPassword.value, state.profileData);
+    this.props.state.signIn(state.loginEmail, state.loginPassword, state.profileData);
   };
 
   showForgotPassword = () => {
@@ -52,14 +52,14 @@ export default class SignIn extends React.Component<ISimpleComponent, {}> {
           label={i18n`Email`}
           placeholder={i18n`Email Address`}
           name="email"
-          owner={state.loginEmail}
+          owner={Form.requiredField(state, 'loginEmail', Form.emailValidator)}
         />
         <Form.Input
           icon="lock"
           name="password"
           type="password"
           label={i18n`Password`}
-          owner={state.loginPassword}
+          owner={Form.requiredField(state, 'loginPassword', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
         />
         <Grid centered className="equal width">
           <Grid.Row>
