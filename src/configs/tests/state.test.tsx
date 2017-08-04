@@ -19,6 +19,7 @@ const should = chai.should();
 
 // add date scalar
 const addedSchema = `
+  scalar Date
   type Profile {
     name: String
     organisation: String
@@ -29,22 +30,38 @@ const addedSchema = `
     organisation: String
   }
 `;
-let typeDefs = (addedSchema + modules.schema).replace(/Date/g, 'Int');
+let typeDefs = addedSchema + modules.schema; // .replace(/Date/g, 'Int');
+
+const resolvers = {
+  Date: {
+    __parseValue (value: string) {
+      return value != null ? new Date(value) : undefined;
+    },
+    __parseLiteral (ast: any) {
+      return (parseInt(ast.value, 10));
+    },
+    __serialize(value: Date) {
+      return value instanceof Date ? value.getTime() : value;
+    }
+  }
+};
 
 // define schema
-const schema = makeExecutableSchema({ typeDefs });
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 const defaultUser = create.user();
 const defaultToken = {
-  expires: '1',
+  expires: new Date(),
   user: {},
   hashedToken: '#hash'
 };
+
+
+
 function initApollo({ token = defaultToken, user = create.user(), mutation = {} } = {}) {
   // define mocks
   const mocks = {
     Token: () => token,
     User: () => user,
-    // Query: () => ({}),
     Mutation: () => mutation
   };
 
@@ -71,7 +88,7 @@ describe('State', () => {
         return global.localStorage[key];
       },
       removeItem(key: string) {
-        delete(global.localStorage[key]);
+        delete global.localStorage[key];
       }
     };
   });
@@ -80,7 +97,7 @@ describe('State', () => {
     state = getAccountState({ cache: false, profileType: registerProfileModel });
   });
 
-  describe ('init', function() {
+  describe('init', function() {
     it('reads url and put component in required state', function() {
       const clock = sinon.useFakeTimers();
       const coldStartStub = sinon.stub(state, 'coldStart');
@@ -89,7 +106,7 @@ describe('State', () => {
         search: ''
       };
       const locationStub = sinon.stub(global, 'location').get(() => location);
-      state.setProfileData(create.testProfileData)
+      state.setProfileData(create.testProfileData);
       // reset password
       global.location.search = 'http://test?resetPassword=pwd';
 
@@ -106,7 +123,7 @@ describe('State', () => {
       state.view.should.equal('signIn');
       clock.tick(2);
 
-      coldStartStub.should.have.been.calledWith('verify', create.testProfileData)
+      coldStartStub.should.have.been.calledWith('verify', create.testProfileData);
 
       locationStub.restore();
       clock.restore();
@@ -118,8 +135,8 @@ describe('State', () => {
       const l = global.localStorage;
       global.localStorage = null;
 
-      state.coldStart('' , '');
-      state.error.should.equal('You cannot log in in private mode. Please turn it off and try again.')
+      state.coldStart('', '');
+      state.error.should.equal('You cannot log in in private mode. Please turn it off and try again.');
 
       global.localStorage = l;
     });
@@ -140,8 +157,8 @@ describe('State', () => {
 
       state.token.should.equal(create.testToken);
       resumeStub.should.have.been.calledWith(create.testToken, 10, create.testProfileData);
-    })
-  })
+    });
+  });
 
   describe('signIn', function() {
     it('prohibits sign in with incorrect email and password', () => {
@@ -174,7 +191,7 @@ describe('State', () => {
       state.loginPassword.onChange('MyPassword');
 
       try {
-        await state.signIn('email@email.com', 'password', 'name');
+        const result = await state.signIn('email@email.com', 'password', 'name');
       } catch (ex) {
         /**/
       }
@@ -184,8 +201,10 @@ describe('State', () => {
       state.user.profile.name.should.equal(user.profile.name);
       state.loginPassword.value.should.be.empty;
 
+      console.log(localStorage.getItem('jwtTokenExpiration'))
+
       localStorage.getItem('jwtToken').should.equal(defaultToken.hashedToken);
-      localStorage.getItem('jwtTokenExpiration').should.equal(defaultToken.expires);
+      localStorage.getItem('jwtTokenExpiration').should.equal(defaultToken.expires.getTime().toString());
     });
 
     it('shows server error messages', async () => {
@@ -381,41 +400,50 @@ describe('State', () => {
   });
 
   async function checkMutationAndLogin(func: () => void) {
-    const logInSpy = sinon.spy(state, 'logIn');
-    initApollo();
-
-    let location = {
-      href: ''
-    };
     const locationStub = sinon.stub(global, 'location').get(() => location);
-    global.location.href = 'http://test?token';
-
     const originalPushState = global.history.pushState;
     const pushStateStub = sinon.stub(global.history, 'pushState');
 
-    // check that user is not logged in
-    should.not.exist(state.userId);
+    try {
+      const logInSpy = sinon.spy(state, 'logIn');
+      initApollo();
 
-    await func();
+      let location = {
+        href: ''
+      };
+      
+      global.location.href = 'http://test?token';
 
-    // check that user is logged in
-    logInSpy.should.have.been.called;
-    state.userId.should.equal(defaultUser._id);
+      
 
-    // if history is available push state is called
-    global.history.pushState.should.have.been.calledWith(null, '', 'http://test');
+      // check that user is not logged in
+      should.not.exist(state.userId);
 
-    // otherwise reload page
-    
-    global.history.pushState = null;
+      await func();
 
-    await func();
+      // check that user is logged in
+      logInSpy.should.have.been.called;
+      state.userId.should.equal(defaultUser._id);
 
-    global.location.href.should.equal('http://test');
+      // if history is available push state is called
+      global.history.pushState.should.have.been.calledWith(null, '', 'http://test');
 
-    global.history.pushState = originalPushState;
-    pushStateStub.restore();
-    locationStub.restore();
+      // otherwise reload page
+
+      global.history.pushState = null;
+
+      await func();
+
+      global.location.href.should.equal('http://test');
+
+      
+    } catch (ex) {
+      throw ex;
+    } finally {
+      global.history.pushState = originalPushState;
+      pushStateStub.restore();
+      locationStub.restore();
+    }
   }
 
   describe('verify', function() {
@@ -581,7 +609,6 @@ describe('State', () => {
 
     it('displays server messages', async function() {
       async function testServerMessage(message: string) {
-
         initApollo({
           mutation: {
             requestResendVerification: () => {
@@ -624,15 +651,14 @@ describe('State', () => {
   });
 
   describe('resume', function() {
-
-    it('Logs user out after token expiration', function () {
+    it('Logs user out after token expiration', function() {
       const logOutSpy = sinon.stub(state, 'logOut');
 
       state.resume(create.testToken, 1, create.testProfileData);
       logOutSpy.should.have.been.called;
     });
 
-    it('Logs user out after server failure in production', async function () {
+    it('Logs user out after server failure in production', async function() {
       const logOutStub = sinon.stub(state, 'logOut');
 
       initApollo({
@@ -664,7 +690,7 @@ describe('State', () => {
       process.env.NODE_ENV = original;
     });
 
-    it('Logs user in after successful resume', async function () {
+    it('Logs user in after successful resume', async function() {
       const logInStub = sinon.stub(state, 'logIn');
 
       initApollo();
@@ -675,7 +701,7 @@ describe('State', () => {
     });
   });
 
-  describe ('logOut', function() {
+  describe('logOut', function() {
     it('clears state of any trace of user and updates local storage', function() {
       localStorage.setItem('jwtToken', 'Foo');
       localStorage.setItem('jwtTokenExpiration', 'Bar');

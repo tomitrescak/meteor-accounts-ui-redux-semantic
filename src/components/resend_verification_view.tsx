@@ -15,6 +15,10 @@ export class ResendVerification extends React.PureComponent<ISimpleComponent, {}
     this.props.state.resendVerification(this.props.state.loginEmail.value);
   };
 
+  showSignIn = () => {
+    this.props.state.showSignIn();
+  }
+
   render() {
     const currentState = this.props.state;
     return (
@@ -47,7 +51,7 @@ export class ResendVerification extends React.PureComponent<ISimpleComponent, {}
             <Grid.Column textAlign="center">
               <Button
                 type="button"
-                onClick={currentState.showSignIn}
+                onClick={this.showSignIn}
                 color="green"
                 labelPosition="left"
                 content={i18n`Sign In`}

@@ -35,6 +35,14 @@ export default class SignIn extends React.Component<ISimpleComponent, {}> {
     this.props.state.signIn(state.loginEmail.value, state.loginPassword.value, state.profileData);
   };
 
+  showForgotPassword = () => {
+    this.props.state.showForgotPassword();
+  }
+
+  showResendVerification = () => {
+    this.props.state.showResendVerification();
+  }
+
   render() {
     const state = this.props.state;
     return (
@@ -56,13 +64,13 @@ export default class SignIn extends React.Component<ISimpleComponent, {}> {
         <Grid centered className="equal width">
           <Grid.Row>
             <Grid.Column textAlign="left">
-              <a onClick={state.showForgotPassword} style={pointer}>{i18n`Forgot Password?`}</a>
+              <a onClick={this.showForgotPassword} style={pointer}>{i18n`Forgot Password?`}</a>
             </Grid.Column>
             <Grid.Column textAlign="center">
               <Button loading={state.mutating} type="submit" primary content={i18n`Sign In`} icon="sign in" />
             </Grid.Column>
             <Grid.Column textAlign="right">
-              <a onClick={state.showResendVerification} style={pointer}>{i18n`Re-send verification`}</a>
+              <a onClick={this.showResendVerification} style={pointer}>{i18n`Re-send verification`}</a>
             </Grid.Column>
           </Grid.Row>
           <Divider horizontal>{i18n`Or`}</Divider>

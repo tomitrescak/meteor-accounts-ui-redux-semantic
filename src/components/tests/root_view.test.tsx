@@ -5,18 +5,24 @@ import { getAccountState, State } from '../../index';
 import { AccountsRoot } from '../accounts_root_view';
 import { User } from '../../configs/user_model';
 import { mount } from 'enzyme';
+import { asReduxStore, connectReduxDevtools } from 'mobx-state-tree';
 
 describe('RootViewTest', function() {
   const data = {
-    // css: 'ui inverted segment',
+    css: 'ui segment',
     story: 'Root View',
     info: '',
     folder: 'Accounts',
-    get state() {
-      return getAccountState({ cache: false });
-    },
+    // get state() {
+    //   return getAccountState({ cache: false });
+    // },
     get component() {
-      return this.componentWithState((s) => { s.setView('signIn') });
+      const state = getAccountState({ cache: false });
+      global.__store = state;
+      const store = asReduxStore(state);
+      connectReduxDevtools(require('remotedev'), state);
+      state.setView('signIn');
+      return <AccountsRoot state={state} extraFields={() => null} />;
     },
     componentWithState(modifyState: (state: State<User>) => void = state => null) {
       const state = getAccountState({ cache: false });
@@ -41,6 +47,4 @@ describe('RootViewTest', function() {
     const wrapper = mount(data.componentWithState(s => s.setView('loggedIn')));
     wrapper.should.matchSnapshot();
   });
-
-  
 });
