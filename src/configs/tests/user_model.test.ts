@@ -1,4 +1,4 @@
-import { User, UserModel, RegisterProfileModel } from '../user_model';
+import { User, UserModel } from '../user_model';
 
 describe('User Model', function() {
   let user: User;
@@ -18,16 +18,9 @@ describe('User Model', function() {
     user.isAdmin().should.be.true;
   });
 
-  it('json asnd pars: default implementation throws error', function() {
+  it('json: default implementation throws error', function() {
     (() => user.json()).should.throw('Not implemented!');
-    (() => user.parse(null)).should.throw('Not implemented!');
+    // (() => user.parse(null)).should.throw('Not implemented!');
   });
 });
 
-describe('User Profile', () => {
-  it('json asnd pars: default implementation throws error', function() {
-    const profile = RegisterProfileModel.create();
-    (() => profile.json()).should.throw('Not implemented!');
-    (() => profile.parse(null)).should.throw('Not implemented!');
-  });
-});

@@ -9,26 +9,27 @@ import { mutate as apolloMutate } from 'apollo-mantra';
 import { Snapshot } from 'mobx-state-tree/dist/types/complex-types/object';
 import { UserModel, RegisterProfile, RegisterProfileModel, User } from './user_model';
 import { trimInput, isEmail, isNotEmpty, isValidPassword, areValidPasswords } from '../configs/helpers';
-import * as Form from './form';
+import * as Form from 'semantic-ui-mobx';
 
 export interface StateBase {
   apolloError: string;
   error: string;
+  fields: { [index: string]: Form.FieldModel }
   info: string;
+  loggingIn: boolean;
+  loginEmail: string;
+  loginPassword: string;
   mutating: boolean;
+  profile: any;
   profileData: string;
+  registerName: string;
+  registerPassword1: string;
+  registerPassword2: string;
+  registerProfile: any;
   token: string;
   user: User;
   userId: string;
   view: string;
-  loggingIn: boolean;
-  loginEmail: string;
-  loginPassword: string;
-  registerPassword1: string;
-  registerPassword2: string;
-  registerName: string;
-  profile: any;
-  registerProfile: any;
   changeField(key: string, value: any): void;
   coldStart(verifyToken: string, profileData: string): void;
   emailResetLink(email: string, callback?: Function): void;
@@ -608,6 +609,7 @@ export function createState<T extends User>(
 
   const ComposedState = Form.createFormStateFromModel('Accounts', AccountState);
   return ComposedState.create({ user: null, userId: null }) as any;
+
 
   // // const ComposedState1 = Form.createFormState1('Accounts', { mimo: 1, bar: '' }, { foo() { }});
   // const g = ComposedState.create();

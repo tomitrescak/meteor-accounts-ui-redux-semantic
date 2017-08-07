@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Form from '../configs/form';
+import * as Form from 'semantic-ui-mobx';
 
 import i18n from 'es2015-i18n-tag';
 import { Grid, Button, Divider } from 'semantic-ui-react';
@@ -14,6 +14,10 @@ export default class ForgotPassword extends React.PureComponent<ISimpleComponent
     e.preventDefault();
     this.props.state.emailResetLink(this.props.state.loginEmail);
   };
+
+  showSignIn = () => {
+    this.props.state.showSignIn();
+  }
 
   render() {
     const currentState = this.props.state;
@@ -43,7 +47,7 @@ export default class ForgotPassword extends React.PureComponent<ISimpleComponent
             <Grid.Column textAlign="center">
               <Button
                 type="button"
-                onClick={currentState.showSignIn}
+                onClick={this.showSignIn}
                 color="green"
                 labelPosition="left"
                 content={i18n`Sign In`}

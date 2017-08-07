@@ -5,7 +5,7 @@ import { Grid, Button, Divider } from 'semantic-ui-react';
 import { observer } from 'mobx-react';
 import { IRegistrationComponent } from './shared';
 
-import * as Form from '../configs/form';
+import * as Form from 'semantic-ui-mobx';
 
 @observer
 export default class SignUp extends React.PureComponent<IRegistrationComponent, {}> {

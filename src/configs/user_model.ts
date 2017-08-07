@@ -23,10 +23,10 @@ export const RegisterProfileModel = types.model(
     json(): {} {
       throw new Error('Not implemented!');
     },
-    parse(model: any) {
-      /**/
-      throw new Error('Not implemented!');
-    }
+    // parse(model: any) {
+    //   /**/
+    //   throw new Error('Not implemented!');
+    // }
   }
 );
 
@@ -35,14 +35,13 @@ export const UserModel = types.model(
   {
     _id: '',
     profile: types.optional(UserProfileModel, {}),
-    emails: types.maybe(types.array(UserEmail)),
+    // emails: types.maybe(types.array(UserEmail)),
     roles: types.array(types.string)
   },
   {
     isRole(role: string) {
       return this.roles && this.roles.indexOf(role) >= 0;
     },
-
     isAdmin() {
       return this.roles && this.roles.indexOf('admin') >= 0;
     },
@@ -55,10 +54,6 @@ export const UserModel = types.model(
     json(): {} {
       throw new Error('Not implemented!');
     },
-    parse(model: any) {
-      /**/
-      throw new Error('Not implemented!');
-    }
   }
 );
 

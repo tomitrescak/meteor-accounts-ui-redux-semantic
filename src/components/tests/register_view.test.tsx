@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as sinon from 'sinon';
-import * as Form from '../../configs/form';
+import * as Form from 'semantic-ui-mobx';
 
 import { mount, ReactWrapper } from 'enzyme';
 import { create } from './test_data';
@@ -34,7 +34,7 @@ const composedUserModel = types.compose('User', UserModel, {
 });
 
 const userModel = types.optional(composedUserModel, {
-  emails: [],
+  // emails: [],
   roles: []
 });
 

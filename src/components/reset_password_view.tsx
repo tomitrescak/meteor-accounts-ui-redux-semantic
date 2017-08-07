@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Form from '../configs/form';
+import * as Form from 'semantic-ui-mobx';
 
 import i18n from 'es2015-i18n-tag';
 import { Grid, Button, Divider } from 'semantic-ui-react';
@@ -27,6 +27,10 @@ export default class ResetPassword extends React.PureComponent<IComponent, {}> {
       currentState.profileData
     );
   };
+
+  showSignIn = () => {
+    this.props.state.showSignIn();
+  }
 
   render() {
     const state = this.props.state;
@@ -62,7 +66,7 @@ export default class ResetPassword extends React.PureComponent<IComponent, {}> {
             <Grid.Column textAlign="center">
               <Button
                 type="button"
-                onClick={state.showSignIn}
+                onClick={this.showSignIn}
                 color="green"
                 labelPosition="left"
                 content={i18n`Sign In`}

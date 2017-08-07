@@ -21,7 +21,7 @@ describe('LoggedViewTest', () => {
         state.setUser({
           _id: '2',
           roles: [],
-          emails: [{ address: '', verified: true }],
+          // emails: [{ address: '', verified: true }],
           profile: { name: 'Tomas Trescak' }
         });
         return state;

@@ -4,3 +4,7 @@ tslint.json
 .vscode
 public
 .fusebox
+mocha.js
+wallaby.js
+setup.js
+fuse.js

@@ -1,6 +1,6 @@
 {
   "name": "apollo-authentication-semantic-ui",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "UI for apollo authentication",
   "main": "./dist/index.js",
   "scripts": {
@@ -16,7 +16,10 @@
     "type": "git",
     "url": "git+https://tomitrescak@github.com/tomitrescak/apollo-authentication-semantic-ui.git"
   },
-  "keywords": ["Apollo", "Authentication"],
+  "keywords": [
+    "Apollo",
+    "Authentication"
+  ],
   "author": "Tomi Trescak",
   "license": "MIT",
   "bugs": {
@@ -28,8 +31,11 @@
     "@types/graphql": "^0.10.1",
     "@types/react": "^15.0.39",
     "apollo-client": "^1.9.0-1",
+    "apollo-mantra": "^1.6.1",
+    "apollo-module-authentication": "1.2.0",
     "apollo-modules": "^1.0.7",
     "apollo-test-utils": "^0.3.2",
+    "chai-match-snapshot": "^1.0.12",
     "es2015-i18n-tag": "^1.1.6",
     "fuse-box": "2.2.2-beta.6",
     "fuse-test-runner": "https://github.com/tomitrescak/fuse-test-runner",
@@ -44,24 +50,36 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",
-    "semantic-ui-mobx": "^0.0.23",
+    "semantic-ui-mobx": "1.x.x",
     "semantic-ui-react": "^0.71.2",
     "sweetalert2": "^6.6.6",
     "ts-node": "^3.3.0",
     "typescript": "^2.4.2",
     "typestyle": "^1.3.7",
-    "wafl": "0.x.x",
-    "apollo-mantra": "^1.6.1",
-    "apollo-module-authentication": "1.2.0",
-    "chai-match-snapshot": "^1.0.12"
+    "wafl": "0.x.x"
   },
-  "dependencies": {},
-  "pre-commit": ["test"],
+  "dependencies": {
+    "semantic-ui-mobx": "^1.0.4"
+  },
+  "pre-commit": [
+    "test"
+  ],
   "nyc": {
-    "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "extension": [".ts", ".tsx"],
-    "require": ["ts-node/register"],
-    "reporter": ["text-summary", "html"],
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
     "sourceMap": true,
     "instrument": true
   }

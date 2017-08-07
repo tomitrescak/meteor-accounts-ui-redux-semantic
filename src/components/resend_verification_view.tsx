@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Form from '../configs/form';
+import * as Form from 'semantic-ui-mobx';
 
 import i18n from 'es2015-i18n-tag';
 import { Grid, Button, Divider } from 'semantic-ui-react';
@@ -32,7 +32,7 @@ export class ResendVerification extends React.PureComponent<ISimpleComponent, {}
           placeholder={i18n`Email Address`}
           name="email"
           icon="mail"
-          owner={Form.requiredField(this.props.state, 'loginEmail', Form.emailValidator)}
+          owner={Form.requiredField(this.props.state, 'loginEmail')}
         />
         <Grid centered className="equal width">
           <Grid.Row>
