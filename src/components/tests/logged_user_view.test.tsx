@@ -3,9 +3,10 @@ import * as sinon from 'sinon';
 import { mount } from 'enzyme';
 
 import { UserView } from '../logged_user_view';
-import { User } from '../../configs/user_model';
+import { User, RegisterProfile } from '../../configs/user_model';
 import { getAccountState, State } from '../../index';
 import { Menu, Dropdown } from 'semantic-ui-react';
+import { create } from './test_data';
 
 describe('LoggedViewTest', () => {
   const data = {
@@ -18,17 +19,17 @@ describe('LoggedViewTest', () => {
     get component() {
       return data.componentWithState(state => {
         state.setUserId('1');
-        state.setUser({
+        state.setUser(create.userModel({
           _id: '2',
           roles: [],
           // emails: [{ address: '', verified: true }],
           profile: { name: 'Tomas Trescak' }
-        });
+        }));
         return state;
       });
     },
     componentWithState(
-      modifyState: (state: State<User>) => State<User> = state => state,
+      modifyState: (state: State<User, RegisterProfile>) => State<User, RegisterProfile> = state => state,
       dropdownItems: any = undefined
     ) {
       const state = modifyState(getAccountState({ cache: false }));
@@ -90,7 +91,7 @@ describe('LoggedViewTest', () => {
   it('Calls "logOut" when clicked on the button', function() {
     const wrapper = mount(data.component);
     const userView = wrapper.find('UserView');
-    const state: State<User> = userView.prop('state') as any;
+    const state: State<User, RegisterProfile> = userView.prop('state') as any;
 
     wrapper.find('DropdownItem').at(0).simulate('click');
 

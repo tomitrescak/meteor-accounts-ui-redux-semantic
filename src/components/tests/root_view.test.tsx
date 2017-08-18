@@ -3,9 +3,8 @@ import * as React from 'react';
 
 import { getAccountState, State } from '../../index';
 import { AccountsRoot } from '../accounts_root_view';
-import { User } from '../../configs/user_model';
+import { User, RegisterProfile } from '../../configs/user_model';
 import { mount } from 'enzyme';
-import { asReduxStore, connectReduxDevtools } from 'mobx-state-tree';
 
 describe('RootViewTest', function() {
   const data = {
@@ -19,12 +18,10 @@ describe('RootViewTest', function() {
     get component() {
       const state = getAccountState({ cache: false });
       global.__store = state;
-      const store = asReduxStore(state);
-      connectReduxDevtools(require('remotedev'), state);
       state.setView('signIn');
       return <AccountsRoot state={state} extraFields={() => null} />;
     },
-    componentWithState(modifyState: (state: State<User>) => void = state => null) {
+    componentWithState(modifyState: (state: State<User, RegisterProfile>) => void = state => null) {
       const state = getAccountState({ cache: false });
       modifyState(state);
       return <AccountsRoot state={state} extraFields={() => null} />;

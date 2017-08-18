@@ -7,36 +7,27 @@ import { create } from './test_data';
 import { AccountsRoot } from '../accounts_root_view';
 import { getAccountState, State } from '../../index';
 
-import { User, UserModel } from '../../configs/user_model';
+import { User, RegisterProfile, UserProfileModel } from '../../configs/user_model';
 import { Segment } from 'semantic-ui-react';
-import { types } from 'mobx-state-tree';
-import { registerProfileModel } from '../../tests/tests_shared';
+import { observable } from 'mobx';
+import { CustomRegisterProfile } from '../../tests/tests_shared';
 
-const profileModel = types.model('Profile', {
-  name: types.maybe(types.string),
-  organisation: types.maybe(types.string),
-  interest: types.maybe(types.string)
-}, {
-  json(): any {
-    return {
-      organisation: this.organisation,
-      interest: this.interest
-    }
+class InvalidProfile extends RegisterProfile {
+  @observable some: string;
+}
+
+class CustomUser extends User {
+  profile: UserProfileModel;
+
+  static create(data: any) {
+    return new CustomUser(data);
   }
-});
 
-const invalidProfileModel = types.model('Profile', {
-  some: ''
-});
-
-const composedUserModel = types.compose('User', UserModel, {
-  profile: types.optional(profileModel, {})
-});
-
-const userModel = types.optional(composedUserModel, {
-  // emails: [],
-  roles: []
-});
+  constructor(data: any) {
+    super(data);
+    this.profile = new UserProfileModel(data.profile);
+  }
+}
 
 // const u = getAccountState({ userType: userModel });
 // const g = userModel.create();
@@ -57,7 +48,11 @@ describe('AccountsRegisterTest', () => {
     folder: 'Accounts',
     options: [{ name: 'Option 1', id: '1' }, { name: 'Option 2', id: '2' }],
     get state() {
-      return getAccountState({ cache: false, userType: userModel, profileType: registerProfileModel });
+      return getAccountState({
+        cache: false,
+        createUser: CustomUser.create,
+        profileType: new CustomRegisterProfile()
+      });
     },
     get component() {
       const state = this.state;
@@ -68,23 +63,24 @@ describe('AccountsRegisterTest', () => {
           state={state}
           extraFields={(profile: any) => {
             return [
-            <Form.Select
-              options={this.options.map(o => ({ text: o.name, value: o.id }))}
-              key="organisation"
-              label="Organisation"
-              placeholder="Your home organisation"
-              owner={Form.requiredField(profile, 'organisation')}
-              name="organisation"
-            />,
-            <Form.Input
-              key="interest"
-              name="interest"
-              label="Interest"
-              placeholder="Your interest"
-              owner={Form.bind(profile, 'interest')}
-              icon="lock"
-            />
-          ]}}
+              <Form.Select
+                options={this.options.map(o => ({ text: o.name, value: o.id }))}
+                key="organisation"
+                label="Organisation"
+                placeholder="Your home organisation"
+                owner={Form.getField(profile, 'organisation')}
+                name="organisation"
+              />,
+              <Form.Input
+                key="interest"
+                name="interest"
+                label="Interest"
+                placeholder="Your interest"
+                owner={Form.getField(profile, 'interest')}
+                icon="lock"
+              />
+            ];
+          }}
         />
       );
     }
@@ -93,13 +89,16 @@ describe('AccountsRegisterTest', () => {
   // needed for stories
   config(data);
 
-  function fill(wrapper: ReactWrapper<{}, {}>) {
+  function fill(wrapper: ReactWrapper<{}, {}>, extras = true) {
     wrapper.find('input[name="name"]').change(create.testName);
     wrapper.find('input[name="email"]').change(create.testEmail);
     wrapper.find('input[name="password1"]').change(create.testPassword);
     wrapper.find('input[name="password2"]').change(create.testPassword);
-    wrapper.find('Dropdown').select(1);
-    wrapper.find('input[name="interest"]').change('My Interest');
+    
+    if (extras) {
+      wrapper.find('Dropdown').select(1);
+      wrapper.find('input[name="interest"]').change('My Interest');
+    }
   }
 
   it('renders register view', function() {
@@ -111,25 +110,38 @@ describe('AccountsRegisterTest', () => {
   it('Renders inverted view', function() {
     const state = data.state;
     state.setView('register');
-    const wrapper = mount(<Segment inverted><AccountsRoot state={state} extraFields={() => null} inverted={true} /></Segment>);
-
-    
+    const wrapper = mount(
+      <Segment inverted>
+        <AccountsRoot state={state} extraFields={() => null} inverted={true} />
+      </Segment>
+    );
 
     wrapper.should.matchSnapshot();
   });
 
   it('detects incorrect profile', function() {
-    const state = getAccountState({ cache: false, userType: userModel, profileType: invalidProfileModel });
+    const state = getAccountState({
+      cache: false,
+      createUser: CustomUser.create,
+      profileType: new InvalidProfile()
+    });
     state.setView('register');
     // console.log(state.registerProfile)
-    const wrapper = mount(<Segment inverted><AccountsRoot state={state} extraFields={() => null} inverted={true} /></Segment>);
+    const wrapper = mount(
+      <Segment inverted>
+        <AccountsRoot state={state} extraFields={() => null} inverted={true} />
+      </Segment>
+    );
+    fill(wrapper, false);
 
-    (() => wrapper.find('form').simulate('submit')).should.throw('You need to implement json() and parse() functions in user and profile!');
+    (() => wrapper.find('form').simulate('submit')).should.throw(
+      'json() not implemented!'
+    );
   });
 
   it('calls registration function', function() {
     const wrapper = mount(data.component);
-    const state: State<User> = wrapper.prop('state') as any;
+    const state: State<User, RegisterProfile> = wrapper.prop('state') as any;
     const registerStub = sinon.stub(state, 'register');
 
     fill(wrapper);
@@ -151,7 +163,7 @@ describe('AccountsRegisterTest', () => {
 
   it('shows error messages', function() {
     const wrapper = mount(data.component);
-    const state = wrapper.prop<State<User>>('state');
+    const state = wrapper.prop<State<User, RegisterProfile>>('state');
     sinon.stub(state, 'mutate');
 
     // missing name
@@ -188,10 +200,10 @@ describe('AccountsRegisterTest', () => {
   it('Self initialises registerProfile model', function() {
     const state = data.state;
 
-    state.setUser({ roles: [], profile: { name: 'Tomas' } });
+    state.setUser(create.userModel({ _id: '1', roles: [], profile: { name: 'Tomas' } }));
 
     state.user.profile.name.should.equal('Tomas');
-  })
+  });
 });
 
 export const AccountsRegisterTest = global.fuseExport;

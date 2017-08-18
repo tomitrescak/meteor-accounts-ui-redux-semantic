@@ -1,12 +1,13 @@
-import { User, UserModel } from '../user_model';
+import { User } from '../user_model';
+import { create } from '../../components/tests/test_data';
 
 describe('User Model', function() {
   let user: User;
 
   beforeEach(function() {
-    user = UserModel.create({
+    user = new User(create.userModel({
       roles: ['admin']
-    });
+    }));
   });
 
   it('isRole: checks for a role', function() {

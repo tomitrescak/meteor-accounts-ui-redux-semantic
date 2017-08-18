@@ -1,15 +1,16 @@
 import { getAccountState, State } from './configs/state';
-import { User } from './configs/user_model';
-
+import { User, RegisterProfile } from './configs/user_model';
+ 
 export { default as AccountsView } from './components/accounts_root_view';
 export { default as UserView } from './components/logged_user_view';
-export { default as UserModel } from './configs/user_model';
+export { User, RegisterProfile } from './configs/user_model';
 export { getAccountState, State } from './configs/state';
 
-export function initState<T extends User>(userType: any, profileType: any): State<T> {
+export function initState<T extends User, U extends RegisterProfile>(createUser: (data: any) => T, profileType: U, cache: boolean): State<T, U> {
   const state = getAccountState({
-    userType,
-    profileType
+    createUser,
+    profileType,
+    cache
   });
 
   state.init();

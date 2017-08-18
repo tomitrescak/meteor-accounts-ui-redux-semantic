@@ -23,7 +23,7 @@ export class ResendVerification extends React.PureComponent<ISimpleComponent, {}
     const currentState = this.props.state;
     return (
       <Form.Form
-        onSubmit={this.emailVerification.bind(this)}
+        onSubmit={this.emailVerification}
         method="post"
         className={this.props.inverted ? 'inverted' : ''}
       >
@@ -32,7 +32,7 @@ export class ResendVerification extends React.PureComponent<ISimpleComponent, {}
           placeholder={i18n`Email Address`}
           name="email"
           icon="mail"
-          owner={Form.requiredField(this.props.state, 'loginEmail')}
+          owner={Form.getField(this.props.state, 'loginEmail')}
         />
         <Grid centered className="equal width">
           <Grid.Row>

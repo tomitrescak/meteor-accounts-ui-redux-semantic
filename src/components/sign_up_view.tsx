@@ -9,13 +9,13 @@ import * as Form from 'semantic-ui-mobx';
 
 @observer
 export default class SignUp extends React.PureComponent<IRegistrationComponent, {}> {
-  register(e: any) {
+  register = (e: any) => {
     e.preventDefault();
 
     const currentState = this.props.state;
 
     if (!currentState.registerProfile.json) {
-      throw new Error('You need to implement json() and parse() functions in user and profile!');
+      throw new Error('You need to implement json() and clear() functions in user and profile!');
     }
 
     if (
@@ -43,34 +43,34 @@ export default class SignUp extends React.PureComponent<IRegistrationComponent, 
     const currentState = this.props.state;
 
     return (
-      <Form.Form onSubmit={this.register.bind(this)} method="post" className={this.props.inverted ? 'inverted' : ''}>
+      <Form.Form onSubmit={this.register} method="post" className={this.props.inverted ? 'inverted' : ''}>
         <Form.Input
           label={i18n`Name and Surname`}
           placeholder={i18n`Your full name`}
           name="name"
           icon="user"
-          owner={Form.requiredField(currentState, 'registerName')}
+          owner={Form.getField(currentState, 'registerName')}
         />
         <Form.Input
           icon="mail"
           label={i18n`Email`}
           placeholder={i18n`Email Address`}
           name="email"
-          owner={Form.requiredField(currentState, 'loginEmail', Form.emailValidator)}
+          owner={Form.getField(currentState, 'loginEmail')}
         />
         <Form.Input
           type="password"
           label={i18n`Password`}
           placeholder={i18n`Password`}
           name="password1"
-          owner={Form.requiredField(currentState, 'registerPassword1', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
+          owner={Form.getField(currentState, 'registerPassword1')}
         />
         <Form.Input
           type="password"
           label={i18n`Password again`}
           placeholder={i18n`Password`}
           name="password2"
-          owner={Form.requiredField(currentState, 'registerPassword2', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
+          owner={Form.getField(currentState, 'registerPassword2')}
         />
 
         {this.props.extraFields(currentState.registerProfile)}

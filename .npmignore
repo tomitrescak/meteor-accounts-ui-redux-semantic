@@ -8,3 +8,4 @@ mocha.js
 wallaby.js
 setup.js
 fuse.js
+tsconfig.json

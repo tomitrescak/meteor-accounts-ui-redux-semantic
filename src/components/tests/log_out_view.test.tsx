@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import { mount } from 'enzyme';
 
 import { LogOutView } from '../log_out_view';
-import { User } from '../../configs/user_model';
+import { User, RegisterProfile } from '../../configs/user_model';
 import { getAccountState, State } from '../../index';
 
 describe('LogOutViewTest', () => {
@@ -34,7 +34,7 @@ describe('LogOutViewTest', () => {
 
   it('Calls "logOut" when clicked on the button', function() {
     const wrapper = mount(data.component);
-    const state: State<User> = wrapper.prop('state') as any;
+    const state: State<User, RegisterProfile> = wrapper.prop('state') as any;
 
     wrapper.find('button').simulate('click');
 

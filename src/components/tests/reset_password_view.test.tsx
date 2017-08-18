@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as sinon from 'sinon';
 import { mount } from 'enzyme';
 
-import { User } from '../../configs/user_model';
+import { User, RegisterProfile } from '../../configs/user_model';
 import { getAccountState, AccountsView, State } from '../../index';
 import { create } from './test_data';
 import { Segment } from 'semantic-ui-react';
@@ -65,7 +65,7 @@ describe('ResetPasswordViewTest', () => {
 
   it('Calls "resetPassword" when clicked on the button', function() {
     const wrapper = mount(data.component);
-    const state = wrapper.prop<State<User>>('state');
+    const state = wrapper.prop<State<User, RegisterProfile>>('state');
 
     wrapper.find('input[name="password1"]').change(create.testPassword);
     wrapper.find('input[name="password2"]').change(create.testPassword);

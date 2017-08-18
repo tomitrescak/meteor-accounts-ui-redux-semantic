@@ -1,26 +1,25 @@
 // import * as React from 'react';
-// import * as moment from 'moment';
+// import * as mom from 'moment';
 // import { observer } from 'mobx-react';
 // import { style } from 'typestyle';
 // import i18n from 'es2015-i18n-tag';
-// import { types, IType, getParent } from 'mobx-state-tree';
 // import {
 //   FormComponent,
 //   FormGroupProps,
 //   Form as SUIForm,
 //   Label as SUILabel,
 //   Input as SuiInput,
+//   TextArea as SUITextArea,
 //   FormInputProps,
 //   FormSelectProps,
 //   FormRadioProps,
 //   FormTextAreaProps,
-//   FormFieldProps
+//   FormFieldProps,
+//   Dropdown
 // } from 'semantic-ui-react';
 
 // import DatePickerView from 'react-datepicker';
 
-// import { ISnapshottable } from 'mobx-state-tree/dist/types/type';
-// import { IModelType, Snapshot } from 'mobx-state-tree/dist/types/complex-types/object';
 // import { observable } from 'mobx';
 
 // export { Form as SUIForm } from 'semantic-ui-react';
@@ -28,8 +27,6 @@
 // export const Form = SUIForm;
 // export const Field = SUIForm.Field;
 // export const Group = SUIForm.Group;
-
-// let g: IModelType;
 
 // const errorStyle = style({
 //   marginTop: '3px!important'
@@ -45,49 +42,141 @@
 // }
 
 // export type Validator = (value: string | number) => string;
+// export type FieldHolder = {
+//   [index: string]: FieldModel;
+// };
 
-// const baseModel = types.model(
-//   'BaseModel',
-//   {},
-//   {
-//     changeField(key: string, value: any) {
-//       this[key] = value;
-//     },
-//     validate() {
-//       let valid = true;
-//       let fields = this['fields'] as FieldModel[];
-//       let message = '';
-//       for (let key of Object.getOwnPropertyNames(fields)) {
-//         let field = fields[key];
-//         valid = valid && field.isValid();
+// export interface FieldDefinition {
+//   key: string;
+//   validators?: Validator[]
+// }
+
+// export function getField<T extends FormState>(owner: T, key: keyof T): FieldModel {
+//   return owner.fields[key];
+// }
+
+// export class FormState {
+//   fields: FieldMap;
+//   fieldDefinitions: FieldDefinition[];
+
+//   constructor() {
+//     if (this.fieldDefinitions && this.fieldDefinitions.length) {
+//       this.fields = {};
+//       for (let field of this.fieldDefinitions) {
+//         this.fields[field.key] = new FieldModel(this, field.key, field.validators);
 //       }
-//       return valid;
 //     }
 //   }
-// );
 
+//   // initFields(data: any) {
+//   //   let ownerKeys = Object.getOwnPropertyNames(this);
+
+//   //   for (let key of Object.getOwnPropertyNames(this.fields)) {
+//   //     if (ownerKeys.indexOf(key) === -1) {
+//   //       throw new Error(`Field '${key}' does not exists on owner!`);
+//   //     } 
+
+//   //     let field = this.fields[key];
+//   //     field.store = this;
+//   //     field.key = key; 
+//   //     if (data[key] != null) {
+//   //       field.value = data[key];
+//   //     } else if (field.value == null) {
+//   //       field.value = field.defaultValue;
+//   //     }
+//   //   }
+//   // }
+
+//   changeField(key: string, value: any) {
+//     if (this.fields[key] === undefined) {
+//       throw new Error(`Store has no key "${key}"`);
+//     }
+//     (this as any)[key] = value;
+//   }
+
+//   validate(): boolean {
+//     let valid = true;
+//     let fields = (this as any).fields as { [index: string]: FieldModel };
+//     let message = '';
+//     for (let key of Object.getOwnPropertyNames(fields)) {
+//       let field = fields[key];
+//       valid = valid && field.isValid();
+//     }
+//     return valid;
+//   }
+// }
+
+// function initField(owner: any, key: string, validators?: Validator[]) {
+//   if (!owner.fieldDefinitions) { owner.fieldDefinitions = [] };
+//   owner.fieldDefinitions.push({key, validators});
+//   return observable(owner, key);
+// }
+
+// export function field(...validators: Validator[]): any;
+// export function field(owner: any, key: string): any;
+// export function field(...params: any[]): any {
+//   if (params.length > 1 && typeof params[1] === 'string') {
+//     const owner = params[0];
+//     const key = params[1];
+//     return initField(owner, key);
+//   } else {
+//     return function (owner: any, key: string) {
+//       return initField(owner, key, params);
+//     }
+//   }
+// }
+
+// export function requiredField(...validators: Validator[]): any;
+// export function requiredField(owner: any, key: string): any;
+// export function requiredField(...params: any[]): any {
+//   if (params.length > 1 && typeof params[1] === 'string') {
+//     const owner = params[0];
+//     const key = params[1];
+//     return initField(owner, key, [requiredValidator]);
+//   } else {
+//     return function (owner: any, key: string) {
+//       return initField(owner, key, params.concat([requiredValidator]));
+//     }
+//   }
+// }
+
+// // export const baseModel = types.model(
+// //   'BaseModel',
+// //   {},
+// //   {
+// //     changeField(key: string, value: any) {
+// //       (this as FieldHolder)[key] = value;
+// //     },
+// //     validate(): boolean {
+// //       let valid = true;
+// //       let fields = (this as any).fields as { [index: string]: FieldModel };
+// //       let message = '';
+// //       for (let key of Object.getOwnPropertyNames(fields)) {
+// //         let field = fields[key];
+// //         valid = valid && field.isValid();
+// //       }
+// //       return valid;
+// //     }
+// //   }
+// // );
 
 // export interface IFormExtension {
-//   fields: FieldModel[],
+//   fields: { [index: string]: FieldModel };
 //   changeField: (key: string, value: any) => void;
 //   validate(): boolean;
 // }
 
-// export function createFormStateFromModel<T, U, V>(
-//   name: string,
-//   model: IModelType<T, U, V>
-// ): IModelType<T, U, V & IFormExtension> {
-//   return types.compose(name, model, baseModel) as  any;
-// }
+// // export function createFormStateFromModel<T, U, V>(
+// //   name: string,
+// //   model: IModelType<T, U, V>
+// // ): IModelType<T, U, V & IFormExtension> {
+// //   return types.compose(name, model, baseModel) as any;
+// // }
 
-// export function createStore<T, U, V>(
-//   name: string,
-//   fields: T,
-//   functions: U
-// ): IModelType<T, U, V & IFormExtension> {
-//   // return types.model(name, fields, functions) as any;
-//   return types.compose(name, types.model(name, fields, functions), baseModel) as any;
-// }
+// // export function createStore<T, U, V>(name: string, fields: T, functions: U): IModelType<T, U, V & IFormExtension> {
+// //   // return types.model(name, fields, functions) as any;
+// //   return types.compose(name, types.model(name, fields, functions), baseModel) as any;
+// // }
 
 // export class FieldModel {
 //   @observable message = '';
@@ -101,17 +190,24 @@
 //     this.key = key;
 //     this.validators = validators;
 
-//     if (!owner) {
-//       throw new Error(`Field '${key}' has no owner`);
+//     if (owner === undefined) {
+//       throw new Error('Owner does not exists for key: ' + key);
 //     }
 //   }
 
 //   get value() {
-//     return this.store[this.key] as any;
+//     if (this.store == null) {
+//       throw new Error(`Store for key '${this.key}' does not exist`)
+//     }
+//     return (this.store as any)[this.key];
 //   }
 
 //   set value(value: any) {
-//     this.store.changeField(this.key, value);
+//     if (this.store.changeField) {
+//       this.store.changeField(this.key, value);
+//     } else {
+//       (this.store as any)[this.key] = value;
+//     }
 //   }
 
 //   validate(): string {
@@ -136,7 +232,7 @@
 //   }
 
 //   onChange(value: string | number | boolean) {
-//     this.value = value != null ? value.toString() : '';
+//     this.value = value != null ? value : '';
 //     this.validate();
 //   }
 
@@ -209,14 +305,15 @@
 
 // export interface Owner {
 //   // [key: string]: any;
-//   changeField(key: string, value: any): void;
+//   changeField?(key: string, value: any): void;
+//   fields?: { [index: string]: FieldModel };
 // }
 
 // export function isValid<T extends Owner>(store: T, key?: keyof T) {
 //   if (!key) {
 //     return validate(store);
 //   }
-//   return store['fields'][key].isValid();
+//   return (store as any).fields[key].isValid();
 // }
 
 // export function bind<T extends Owner>(store: T, bind: keyof T, ...validators: Validator[]) {
@@ -237,7 +334,7 @@
 //   owner?: FieldModel;
 //   store?: Owner;
 //   bind?: string;
-//   validators?: Validator[]
+//   validators?: Validator[];
 // }
 
 // export class FormControl<P, T> extends React.PureComponent<P & FormElement, {}> {
@@ -248,8 +345,7 @@
 
 //     if (props.owner) {
 //       this.owner = props.owner;
-//     }
-//     else {
+//     } else {
 //       this.owner = bind(props.store, props.bind as any, ...props.validators);
 //     }
 //     // if (!props.owner) {
@@ -263,6 +359,10 @@
 //     // this.props.owner.value = formEvent.value;
 //     this.owner.onChange(formEvent.value);
 //   };
+
+//   validate = () => {
+//     this.owner.validate();
+//   }
 
 //   get value() {
 //     return this.owner.value;
@@ -281,14 +381,14 @@
 // export class Input extends FormControl<FormInputProps, any> {
 //   render() {
 //     // console.log('Rendering: ' + this.value);
-//     let { label, className, ...rest } = this.props;
+//     let { label, className, owner, ...rest } = this.props;
 //     return (
 //       <Form.Field error={this.owner.hasError} width={this.props.width} className={this.props.className}>
 //         {label &&
 //           <label>
 //             {label}
 //           </label>}
-//         <SuiInput onChange={this.update} value={this.value} placeholder={this.props.placeholder || label} {...rest} />
+//         <SuiInput onChange={this.update} onBlur={this.validate} value={this.value} placeholder={this.props.placeholder || label} {...rest} />
 //         {this.owner.hasError && <ErrorLabel owner={this.owner} />}
 //       </Form.Field>
 //     );
@@ -300,14 +400,14 @@
 // @observer
 // export class TextArea extends FormControl<FormTextAreaProps, {}> {
 //   render() {
-//     let { label, className, ...rest } = this.props;
+//     let { label, className, owner, ...rest } = this.props;
 //     return (
 //       <Form.Field error={this.owner.hasError} width={this.props.width} className={className}>
 //         {label &&
 //           <label>
 //             {label}
 //           </label>}
-//         <Form.TextArea
+//         <SUITextArea
 //           onChange={this.update}
 //           value={this.value}
 //           placeholder={this.props.placeholder || label}
@@ -370,7 +470,8 @@
 //     this.update(null, { value: moment.toDate() });
 //   };
 //   render() {
-//     const { format, placeholder, ...rest } = this.props as any;
+//     const { format, placeholder, owner, ...rest } = this.props as any;
+//     const moment = require('moment');
 //     return (
 //       <div className="three wide field">
 //         {this.props.label &&
@@ -383,7 +484,7 @@
 //           onChange={this.updateDate}
 //           dateFormat={format}
 //           placeholderText={placeholder}
-//           selected={this.value ? moment(this.value) : null}
+//           selected={this.owner.value ? moment(this.owner.value) : null}
 //         />
 //       </div>
 //     );
@@ -416,14 +517,15 @@
 //   };
 
 //   render() {
-//     let { label, className, ...rest } = this.props;
+//     let { label, className, owner, options = [], ...rest } = this.props;
+
 //     return (
 //       <Form.Field error={this.owner.hasError} width={this.props.width} className={this.props.className}>
 //         {label &&
 //           <label>
 //             {label}
 //           </label>}
-//         <Form.Select onChange={this.updateSelect as any} value={this.value} {...rest} />
+//         <Dropdown onChange={this.updateSelect as any} options={options} value={this.value} {...rest} selection={true} />
 //         {this.owner.hasError && <ErrorLabel owner={this.owner} />}
 //       </Form.Field>
 //     );
@@ -440,7 +542,7 @@
 //   };
 
 //   render() {
-//     let { label, className, ...rest } = this.props;
+//     let { label, className, owner, ...rest } = this.props;
 //     return <Form.Radio onChange={this.update} value={'radio'} {...rest} />;
 //   }
 // }
@@ -561,14 +663,3 @@
 //   };
 // }
 
-// // field constructors
-
-// export function requiredField<T extends Owner>(owner: T, key: keyof T, ...validators: Validator[]) {
-//   validators = [requiredValidator].concat(validators || []);
-//   return bind(owner, key, ...validators);
-// }
-
-// export function simpleField<T extends Owner>(owner: T, key: keyof T, ...validators: Validator[]) {
-//   validators = [].concat(validators || []);
-//   return bind(owner, key, ...validators);
-// }

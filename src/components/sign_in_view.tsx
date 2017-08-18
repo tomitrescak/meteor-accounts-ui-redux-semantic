@@ -37,29 +37,33 @@ export default class SignIn extends React.Component<ISimpleComponent, {}> {
 
   showForgotPassword = () => {
     this.props.state.showForgotPassword();
-  }
+  };
 
   showResendVerification = () => {
     this.props.state.showResendVerification();
-  }
+  };
 
   render() {
     const state = this.props.state;
     return (
-      <Form.Form onSubmit={this.signIn} method="post" className={this.props.inverted ? 'inverted' : ''}>
+      <Form.Form
+        onSubmit={this.signIn}
+        method="post"
+        className={this.props.inverted ? 'inverted' : ''}
+      >
         <Form.Input
           icon="mail"
           label={i18n`Email`}
           placeholder={i18n`Email Address`}
           name="email"
-          owner={Form.requiredField(state, 'loginEmail', Form.emailValidator)}
+          owner={Form.getField(state, 'loginEmail')}
         />
         <Form.Input
           icon="lock"
           name="password"
           type="password"
           label={i18n`Password`}
-          owner={Form.requiredField(state, 'loginPassword', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
+          owner={Form.getField(state, 'loginPassword')}
         />
         <Grid centered className="equal width">
           <Grid.Row>
@@ -67,10 +71,19 @@ export default class SignIn extends React.Component<ISimpleComponent, {}> {
               <a onClick={this.showForgotPassword} style={pointer}>{i18n`Forgot Password?`}</a>
             </Grid.Column>
             <Grid.Column textAlign="center">
-              <Button loading={state.mutating} type="submit" primary content={i18n`Sign In`} icon="sign in" />
+              <Button
+                loading={state.mutating}
+                type="submit"
+                primary
+                content={i18n`Sign In`}
+                icon="sign in"
+              />
             </Grid.Column>
             <Grid.Column textAlign="right">
-              <a onClick={this.showResendVerification} style={pointer}>{i18n`Re-send verification`}</a>
+              <a
+                onClick={this.showResendVerification}
+                style={pointer}
+              >{i18n`Re-send verification`}</a>
             </Grid.Column>
           </Grid.Row>
           <Divider horizontal>{i18n`Or`}</Divider>

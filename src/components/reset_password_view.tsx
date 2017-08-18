@@ -45,14 +45,14 @@ export default class ResetPassword extends React.PureComponent<IComponent, {}> {
           label={i18n`Password`}
           placeholder={i18n`Password`}
           name="password1"
-          owner={Form.requiredField(state, 'registerPassword1', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
+          owner={Form.getField(state, 'registerPassword1')}
         />
         <Form.Input
           type="password"
           label={i18n`Password again`}
           placeholder={i18n`Password`}
           name="password2"
-          owner={Form.requiredField(state, 'registerPassword2', Form.lengthValidator(7, 'Password needs to have at least 7 characters'))}
+          owner={Form.getField(state, 'registerPassword2')}
         />
 
         <Grid centered className="equal width">

@@ -1,3 +1,5 @@
+import { User } from '../../configs/user_model';
+
 export const create = {
   testName: 'Luke Skywalker',
   testEmail: 'luke@skywalker.com',
@@ -15,5 +17,8 @@ export const create = {
       name: 'Luke Skywalker',
       organisation: 'WSU'
     }
-  })
+  }),
+  userModel (overrides: Partial<User>) {
+    return new User({ ...create.user(), ...overrides as any });
+  }
 };

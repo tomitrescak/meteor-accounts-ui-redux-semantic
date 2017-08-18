@@ -1,8 +1,8 @@
-import { User } from '../configs/user_model';
+import { User, RegisterProfile } from '../configs/user_model';
 import { State } from '../index';
 
 export interface ISimpleComponent {
-  state: State<User>;
+  state: State<User, RegisterProfile>;
   inverted?: boolean;
 }
 

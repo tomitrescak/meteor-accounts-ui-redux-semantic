@@ -14,12 +14,12 @@ const initState = proxy('../index', {
 
 describe ('Index', function() {
   it('initState: creates state with user and profile model', function() {
-    const userType = {};
+    const createUser = {};
     const profileType = {};
 
-    initState(userType, profileType);
+    initState(createUser, profileType);
 
-    getAccountState.should.have.been.calledWith({userType, profileType})
+    getAccountState.should.have.been.calledWith({cache: undefined, createUser, profileType})
     state.init.should.have.been.called;
   });
 });

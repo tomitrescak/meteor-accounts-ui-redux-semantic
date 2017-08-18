@@ -22,13 +22,13 @@ export default class ForgotPassword extends React.PureComponent<ISimpleComponent
   render() {
     const currentState = this.props.state;
     return (
-      <Form.Form onSubmit={this.emailResetLink.bind(this)} className={this.props.inverted ? 'inverted' : ''}>
+      <Form.Form onSubmit={this.emailResetLink} className={this.props.inverted ? 'inverted' : ''}>
         <Form.Input
           icon="mail"
           label={i18n`Email`}
           placeholder={i18n`Email Address`}
           name="email"
-          owner={Form.bind(this.props.state, 'loginEmail')}
+          owner={Form.getField(this.props.state, 'loginEmail')}
         />
         <Grid centered className="equal width">
           <Grid.Row>
